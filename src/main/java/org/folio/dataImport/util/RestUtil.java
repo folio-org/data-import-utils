@@ -1,6 +1,7 @@
 package org.folio.dataImport.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.http.CaseInsensitiveHeaders;
 import io.vertx.core.http.HttpClient;
@@ -9,7 +10,12 @@ import io.vertx.core.http.HttpClientRequest;
 import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotFoundException;
 import java.util.Map;
 
 /**
@@ -20,6 +26,7 @@ public final class RestUtil {
   public static final String OKAPI_TENANT_HEADER = "x-okapi-tenant";
   public static final String OKAPI_TOKEN_HEADER = "x-okapi-token";
   public static final String OKAPI_URL_HEADER = "x-okapi-url";
+  private static final Logger LOGGER = LoggerFactory.getLogger(RestUtil.class);
 
   public static class WrappedResponse {
     private int code;
@@ -109,5 +116,38 @@ public final class RestUtil {
     options.setConnectTimeout(params.getTimeout());
     options.setIdleTimeout(params.getTimeout());
     return params.getVertx().createHttpClient(options);
+  }
+
+  /**
+   * Validate http response and fail future if necessary
+   *
+   * @param asyncResult - http response callback
+   * @param future      - future of callback
+   * @return - boolean value is response ok
+   */
+  public static boolean validateAsyncResult(AsyncResult<WrappedResponse> asyncResult, Future future) {
+    String httpErrorMessage = "Response HTTP code is not equals 200. Response code: ";
+    if (asyncResult.failed()) {
+      LOGGER.error("Error during HTTP request", asyncResult.cause());
+      future.fail(asyncResult.cause());
+      return false;
+    } else if (asyncResult.result() == null) {
+      LOGGER.error("Error during get response");
+      future.fail(new BadRequestException());
+      return false;
+    } else if (asyncResult.result().getCode() == 404) {
+      LOGGER.error(httpErrorMessage + asyncResult.result().getCode());
+      future.fail(new NotFoundException());
+      return false;
+    } else if (asyncResult.result().getCode() == 500) {
+      LOGGER.error(httpErrorMessage + asyncResult.result().getCode());
+      future.fail(new InternalServerErrorException());
+      return false;
+    } else if (asyncResult.result().getCode() == 200 || asyncResult.result().getCode() == 201) {
+      return true;
+    }
+    LOGGER.error(httpErrorMessage + asyncResult.result().getCode());
+    future.fail(new BadRequestException());
+    return false;
   }
 }
