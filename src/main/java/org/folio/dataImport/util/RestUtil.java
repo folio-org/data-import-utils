@@ -143,7 +143,9 @@ public final class RestUtil {
       LOGGER.error(httpErrorMessage + asyncResult.result().getCode());
       future.fail(new InternalServerErrorException());
       return false;
-    } else if (asyncResult.result().getCode() == 200 || asyncResult.result().getCode() == 201) {
+    } else if (asyncResult.result().getCode() == 200
+      || asyncResult.result().getCode() == 201
+      || asyncResult.result().getCode() == 204) {
       return true;
     }
     LOGGER.error(httpErrorMessage + asyncResult.result().getCode());
