@@ -1,13 +1,13 @@
-package org.folio.dataImport.util;
+package org.folio.dataimport.util;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.http.CaseInsensitiveHeaders;
 
 import java.util.Map;
 
-import static org.folio.dataImport.util.RestUtil.OKAPI_TENANT_HEADER;
-import static org.folio.dataImport.util.RestUtil.OKAPI_TOKEN_HEADER;
-import static org.folio.dataImport.util.RestUtil.OKAPI_URL_HEADER;
+import static org.folio.dataimport.util.RestUtil.OKAPI_TENANT_HEADER;
+import static org.folio.dataimport.util.RestUtil.OKAPI_TOKEN_HEADER;
+import static org.folio.dataimport.util.RestUtil.OKAPI_URL_HEADER;
 
 /**
  * Wrapper class for Okapi connection params

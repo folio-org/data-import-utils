@@ -1,4 +1,4 @@
-package org.folio.dataImport.util;
+package org.folio.dataimport.util;
 
 import org.folio.rest.persist.Criteria.Criteria;
 import org.folio.rest.persist.Criteria.Limit;
