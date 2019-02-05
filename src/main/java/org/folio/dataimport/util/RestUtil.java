@@ -1,4 +1,4 @@
-package org.folio.dataImport.util;
+package org.folio.dataimport.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.AsyncResult;

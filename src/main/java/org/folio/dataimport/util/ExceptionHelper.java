@@ -1,4 +1,4 @@
-package org.folio.dataImport.util;
+package org.folio.dataimport.util;
 
 import io.vertx.core.Future;
 import io.vertx.core.logging.Logger;
