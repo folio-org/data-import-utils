@@ -1,37 +1,30 @@
 package org.folio.dataimport.util;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import com.github.tomakehurst.wiremock.matching.RegexPattern;
-import com.github.tomakehurst.wiremock.matching.UrlPathPattern;
-import io.vertx.core.DeploymentOptions;
+import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.unit.Async;
-import io.vertx.ext.unit.TestContext;
-import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.folio.rest.RestVerticle;
-import org.folio.rest.client.TenantClient;
-import org.folio.rest.tools.utils.NetworkUtils;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
+import org.folio.rest.client.ConfigurationsClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.folio.dataimport.util.RestUtil.OKAPI_TENANT_HEADER;
 import static org.folio.dataimport.util.RestUtil.OKAPI_URL_HEADER;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.spy;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
-@RunWith(VertxUnitRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ ConfigurationUtil.class })
 public class ConfigurationUtilTest {
 
   private String code = "data.import.storage.type";
@@ -43,67 +36,41 @@ public class ConfigurationUtilTest {
       .put("value", "LOCAL_STORAGE")
     ));
 
-  static final String TENANT_ID = "diku";
-  static Vertx vertx;
-  private static int PORT = NetworkUtils.nextFreePort();
-  private static String BASE_URL = "http://localhost:";
-  private static String OKAPI_URL = BASE_URL + PORT;
-  private static final String TOKEN = "token";
-
-  @Rule
-  public WireMockRule mockServer = new WireMockRule(
-    WireMockConfiguration.wireMockConfig()
-      .dynamicPort()
-      .notifier(new Slf4jNotifier(true)));
-
-  @BeforeClass
-  public static void setUpClass(final TestContext context) throws Exception {
-    Async async = context.async();
-    vertx = Vertx.vertx();
-
-    TenantClient tenantClient = new TenantClient(OKAPI_URL, "diku", "dummy-token");
-    DeploymentOptions restVerticleDeploymentOptions = new DeploymentOptions()
-      .setConfig(new JsonObject().put("http.port", PORT));
-    vertx.deployVerticle(RestVerticle.class.getName(), restVerticleDeploymentOptions, res -> {
-      try {
-        tenantClient.postTenant(null, res2 -> async.complete());
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    });
-  }
-
-  @AfterClass
-  public static void tearDownClass(final TestContext context) {
-    Async async = context.async();
-    vertx.close(context.asyncAssertSuccess(res -> {
-      async.complete();
-    }));
-  }
-
-  @Before
-  public void setUp(TestContext testContext) {
-//    WireMock.get("/configurations/entries?query="
-//      + URLEncoder.encode("module==DATA_IMPORT AND ( code==\"data.import.storage.type\")", "UTF-8")
-//      + "&offset=0&limit=3&").willReturn(WireMock.okJson(config.toString()));
-    try {
-    WireMock.stubFor(WireMock.get(new UrlPathPattern(new RegexPattern("/configurations/entries.*"), true))
-      .willReturn(WireMock.okJson(config.toString())));
-    } catch (Exception ignored) {
-    }
-  }
-
   @Test
-  public void getPropertyByCode() {
+  public void shouldReturnFailedFutureWhenInvalidUrl() throws Exception {
     Map<String, String> okapiHeaders = new HashMap<>();
-    okapiHeaders.put(OKAPI_URL_HEADER, "http://localhost:" + mockServer.port());
-    okapiHeaders.put(OKAPI_TENANT_HEADER, TENANT_ID);
-    okapiHeaders.put(RestVerticle.OKAPI_HEADER_TOKEN, TOKEN);
+    okapiHeaders.put(OKAPI_URL_HEADER, "localhost:");
+    okapiHeaders.put(OKAPI_TENANT_HEADER, "diku");
+    okapiHeaders.put(RestVerticle.OKAPI_HEADER_TOKEN, "token");
     OkapiConnectionParams params = new OkapiConnectionParams(okapiHeaders, Vertx.vertx());
 
     ConfigurationUtil.getPropertyByCode(code, params).setHandler(stringAsyncResult -> {
-      assertTrue(stringAsyncResult.succeeded());
-      assertEquals(value, stringAsyncResult.result());
+      assertTrue(stringAsyncResult.failed());
+      assertTrue(stringAsyncResult.cause().getMessage().contains("Could not parse okapiURL: localhost"));
     });
   }
+
+  @Test
+  public void shouldReturnFailedFutureWhenExceptionIsThrown() throws Exception {
+    Map<String, String> okapiHeaders = new HashMap<>();
+    okapiHeaders.put(OKAPI_URL_HEADER, "http://localhost:");
+    okapiHeaders.put(OKAPI_TENANT_HEADER, "diku");
+    okapiHeaders.put(RestVerticle.OKAPI_HEADER_TOKEN, "token");
+    OkapiConnectionParams params = new OkapiConnectionParams(okapiHeaders, Vertx.vertx());
+
+    ConfigurationsClient client = spy(ConfigurationsClient.class);
+    whenNew(ConfigurationsClient.class)
+      .withAnyArguments()
+      .thenReturn(client);
+
+    doThrow(new UnsupportedEncodingException())
+      .when(client)
+      .getEntries(anyString(), anyInt(), anyInt(), isNull(), isNull(), any(Handler.class));
+
+    ConfigurationUtil.getPropertyByCode(code, params).setHandler(stringAsyncResult -> {
+      assertTrue(stringAsyncResult.failed());
+      assertTrue(stringAsyncResult.cause() instanceof UnsupportedEncodingException);
+    });
+  }
+
 }
