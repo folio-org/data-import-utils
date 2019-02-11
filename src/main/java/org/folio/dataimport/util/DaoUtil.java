@@ -6,7 +6,7 @@ import org.folio.rest.persist.Criteria.Offset;
 import org.folio.rest.persist.cql.CQLWrapper;
 import org.z3950.zing.cql.cql2pgjson.CQL2PgJSON;
 
-public class DaoUtil {
+public final class DaoUtil {
 
   private DaoUtil() {
   }
