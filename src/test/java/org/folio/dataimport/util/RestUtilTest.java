@@ -63,7 +63,7 @@ public class RestUtilTest {
     });
   }
 
-    @Test
+  @Test
   public void shouldValidateFailedAsyncResult() {
     AsyncResult<RestUtil.WrappedResponse> failedAsyncResult = getAsyncResult(null, new IOException(), false, true);
     Future future = Future.future();
@@ -144,14 +144,17 @@ public class RestUtilTest {
       public RestUtil.WrappedResponse result() {
         return result;
       }
+
       @Override
       public Throwable cause() {
         return cause;
       }
+
       @Override
       public boolean succeeded() {
         return succeeded;
       }
+
       @Override
       public boolean failed() {
         return failed;
