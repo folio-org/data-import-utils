@@ -30,8 +30,10 @@ public class GenericHandlerAnswerTest {
     stubObject.targetMethod(future);
 
     // then
-    assertTrue(future.succeeded());
-    JsonObject actualResult = future.result();
-    assertEquals(expectedResult, actualResult);
+    future.setHandler(ar -> {
+      assertTrue(future.succeeded());
+      JsonObject actualResult = future.result();
+      assertEquals(expectedResult, actualResult);
+    });
   }
 }
