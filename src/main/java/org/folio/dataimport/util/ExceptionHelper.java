@@ -4,6 +4,7 @@ import io.vertx.core.Future;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import org.apache.http.HttpStatus;
+import org.folio.dataimport.util.exception.ConflictException;
 import org.folio.rest.tools.utils.ValidationHelper;
 
 import javax.ws.rs.BadRequestException;
@@ -27,6 +28,12 @@ public final class ExceptionHelper {
     }
     if (throwable instanceof NotFoundException) {
       return Response.status(HttpStatus.SC_NOT_FOUND)
+        .type(MediaType.TEXT_PLAIN)
+        .entity(throwable.getMessage())
+        .build();
+    }
+    if (throwable instanceof ConflictException) {
+      return Response.status(HttpStatus.SC_CONFLICT)
         .type(MediaType.TEXT_PLAIN)
         .entity(throwable.getMessage())
         .build();
