@@ -1,6 +1,7 @@
 package org.folio.dataimport.util;
 
 import org.apache.http.HttpStatus;
+import org.folio.dataimport.util.exception.ConflictException;
 import org.junit.Test;
 
 import javax.ws.rs.BadRequestException;
@@ -31,6 +32,15 @@ public class ExceptionHelperTest {
     assertEquals(HttpStatus.SC_NOT_FOUND, response.getStatus());
     assertEquals(MediaType.TEXT_PLAIN, response.getMediaType().toString());
     assertEquals("Not found message", response.getEntity().toString());
+  }
+
+  @Test
+  public void shouldReturnConflictResponse() {
+    Response response = ExceptionHelper.mapExceptionToResponse(new ConflictException("Conflict message"));
+    assertNotNull(response);
+    assertEquals(HttpStatus.SC_CONFLICT, response.getStatus());
+    assertEquals(MediaType.TEXT_PLAIN, response.getMediaType().toString());
+    assertEquals("Conflict message", response.getEntity().toString());
   }
 
   @Test
