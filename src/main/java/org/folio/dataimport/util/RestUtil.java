@@ -3,20 +3,20 @@ package org.folio.dataimport.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
-import io.vertx.core.http.CaseInsensitiveHeaders;
-import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.HttpClientOptions;
-import io.vertx.core.http.HttpClientRequest;
-import io.vertx.core.http.HttpClientResponse;
-import io.vertx.core.http.HttpMethod;
+import io.vertx.core.http.*;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import org.folio.HttpStatus;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 import java.util.Map;
+
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.folio.HttpStatus.*;
 
 /**
  * Util class with static method for sending http request
@@ -27,6 +27,7 @@ public final class RestUtil {
   public static final String OKAPI_TOKEN_HEADER = "x-okapi-token";
   public static final String OKAPI_URL_HEADER = "x-okapi-url";
   private static final Logger LOGGER = LoggerFactory.getLogger(RestUtil.class);
+  private static final String STATUS_CODE_IS_NOT_SUCCESS_MSG = "Response HTTP code is not equals 200, 201, 204. Response code: {}";
 
   public static class WrappedResponse {
     private int code;
@@ -126,30 +127,49 @@ public final class RestUtil {
    * @return - boolean value is response ok
    */
   public static boolean validateAsyncResult(AsyncResult<WrappedResponse> asyncResult, Future future) {
-    String httpErrorMessage = "Response HTTP code is not equals 200. Response code: ";
+    boolean result = false;
     if (asyncResult.failed()) {
-      LOGGER.error("Error during HTTP request", asyncResult.cause());
+      LOGGER.error("Error during HTTP request: {}", asyncResult.cause());
       future.fail(asyncResult.cause());
-      return false;
     } else if (asyncResult.result() == null) {
       LOGGER.error("Error during get response");
       future.fail(new BadRequestException());
-      return false;
-    } else if (asyncResult.result().getCode() == 404) {
-      LOGGER.error(httpErrorMessage + asyncResult.result().getCode());
+    } else if (isCode(asyncResult, HTTP_NOT_FOUND)) {
+      LOGGER.error(STATUS_CODE_IS_NOT_SUCCESS_MSG, getCode(asyncResult));
       future.fail(new NotFoundException());
-      return false;
-    } else if (asyncResult.result().getCode() == 500) {
-      LOGGER.error(httpErrorMessage + asyncResult.result().getCode());
+    } else if (isCode(asyncResult, HTTP_INTERNAL_SERVER_ERROR) && !isJson(asyncResult)) {
+      LOGGER.error(STATUS_CODE_IS_NOT_SUCCESS_MSG, getCode(asyncResult));
       future.fail(new InternalServerErrorException());
-      return false;
-    } else if (asyncResult.result().getCode() == 200
-      || asyncResult.result().getCode() == 201
-      || asyncResult.result().getCode() == 204) {
-      return true;
+    } else if (isSuccess(asyncResult)) {
+      result = true;
+    } else {
+      LOGGER.error(STATUS_CODE_IS_NOT_SUCCESS_MSG, getCode(asyncResult));
+      future.fail(new BadRequestException());
     }
-    LOGGER.error(httpErrorMessage + asyncResult.result().getCode());
-    future.fail(new BadRequestException());
-    return false;
+    return result;
+  }
+
+  private static int getCode(AsyncResult<WrappedResponse> asyncResult) {
+    return asyncResult.result().getCode();
+  }
+
+  private static boolean isSuccess(AsyncResult<WrappedResponse> asyncResult) {
+    return isCode(asyncResult, HTTP_OK)
+      || isCode(asyncResult, HTTP_CREATED)
+      || isCode(asyncResult, HTTP_NO_CONTENT)
+      || isPartialSuccess(asyncResult);
+  }
+
+  private static boolean isCode(AsyncResult<WrappedResponse> asyncResult, HttpStatus status) {
+    return getCode(asyncResult) == status.toInt();
+  }
+
+  private static boolean isPartialSuccess(AsyncResult<WrappedResponse> asyncResult) {
+    return isCode(asyncResult, HTTP_INTERNAL_SERVER_ERROR) && isJson(asyncResult);
+  }
+
+  private static boolean isJson(AsyncResult<WrappedResponse> asyncResult) {
+    HttpClientResponse response = asyncResult.result().response;
+    return response != null && APPLICATION_JSON.equals(response.getHeader(CONTENT_TYPE));
   }
 }
