@@ -24,6 +24,7 @@ import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.folio.rest.RestVerticle;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -161,6 +162,29 @@ public class RestUtilTest {
     assertFalse(future.isComplete());
   }
 
+  @Test
+  public void shouldReturnTrueWhenResponseContentTypeIsJsonAndStatusServerError() {
+    HttpClientResponseStub responseStub = new HttpClientResponseStub();
+    responseStub.setStatusCode(500);
+    responseStub.headers().add(CONTENT_TYPE, APPLICATION_JSON);
+    Assert.assertTrue(RestUtil.isPartialSuccess(responseStub));
+  }
+
+  @Test
+  public void shouldReturnFalseWhenResponseContentTypeIsNotJson() {
+    HttpClientResponseStub responseStub = new HttpClientResponseStub();
+    responseStub.setStatusCode(500);
+    Assert.assertFalse(RestUtil.isPartialSuccess(responseStub));
+  }
+
+  @Test
+  public void shouldReturnFalseWhenResponseStatusIsNotServerError() {
+    HttpClientResponseStub responseStub = new HttpClientResponseStub();
+    responseStub.setStatusCode(200);
+    responseStub.headers().add(CONTENT_TYPE, APPLICATION_JSON);
+    Assert.assertFalse(RestUtil.isPartialSuccess(responseStub));
+  }
+
   private AsyncResult<RestUtil.WrappedResponse> getAsyncResult(RestUtil.WrappedResponse result, Throwable cause, boolean succeeded, boolean failed) {
     return new AsyncResult<RestUtil.WrappedResponse>() {
       @Override
@@ -188,6 +212,8 @@ public class RestUtilTest {
   class HttpClientResponseStub implements HttpClientResponse {
 
     private MultiMap headers = new VertxHttpHeaders();
+
+    private int statusCode;
 
     @Override
     public HttpClientResponse resume() {
@@ -221,7 +247,11 @@ public class RestUtilTest {
 
     @Override
     public int statusCode() {
-      return 0;
+      return statusCode;
+    }
+
+    public void setStatusCode(int code) {
+      this.statusCode = code;
     }
 
     @Override
