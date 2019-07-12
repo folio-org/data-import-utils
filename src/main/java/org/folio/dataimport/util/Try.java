@@ -9,6 +9,9 @@ import java.util.function.Supplier;
  */
 public class Try {
 
+  private Try() {
+  }
+
   /**
    * Return future with result returned by specified task.
    * If the {@code task} throws an exception, the returned future will be failed with this exception
