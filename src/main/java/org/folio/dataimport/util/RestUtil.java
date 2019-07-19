@@ -181,4 +181,35 @@ public final class RestUtil {
     HttpClientResponse response = asyncResult.result().response;
     return response != null && APPLICATION_JSON.equals(response.getHeader(CONTENT_TYPE));
   }
+
+  /**
+   * Checks whether the answer is partial successful
+   *
+   * @param response - http response
+   * @return - true if response status is "server error" and content type is "application/json", otherwise false
+   */
+  public static boolean isPartialSuccess(HttpClientResponse response) {
+    return isStatus(response, HTTP_INTERNAL_SERVER_ERROR) && isContentTypeJson(response);
+  }
+
+  /**
+   * Checks the response status for a match with the specified http status
+   *
+   * @param response - http response
+   * @param status   - http response status
+   * @return - true if response status is as specified http status, otherwise false
+   */
+  public static boolean isStatus(HttpClientResponse response, HttpStatus status) {
+    return response.statusCode() == status.toInt();
+  }
+
+  /**
+   * Checks whether response content type is "application/json"
+   *
+   * @param response - http response
+   * @return - true if response content type is "application/json", otherwise false
+   */
+  public static boolean isContentTypeJson(HttpClientResponse response) {
+    return APPLICATION_JSON.equals(response.getHeader(CONTENT_TYPE));
+  }
 }
