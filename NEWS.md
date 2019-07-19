@@ -1,4 +1,5 @@
-## 1.3.0-SNAPSHOT 2019-07-19
+## 1.3.0 2019-07-19
+* Added partial success case for async result validation
 * Added util methods for exceptions handling under async methods calls and response status checking
 
 ## 1.2.0 2019-06-12
