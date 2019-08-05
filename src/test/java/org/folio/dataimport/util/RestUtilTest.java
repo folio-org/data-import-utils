@@ -155,7 +155,7 @@ public class RestUtilTest {
   public void shouldValidatePartialSuccessAsyncResult() {
     HttpClientResponseStub httpClientResponseStub = new HttpClientResponseStub();
     httpClientResponseStub.headers().add(CONTENT_TYPE, APPLICATION_JSON);
-    RestUtil.WrappedResponse response = new RestUtil.WrappedResponse(500, "", httpClientResponseStub);
+    RestUtil.WrappedResponse response = new RestUtil.WrappedResponse(500, "{\"instances\": []}", httpClientResponseStub);
     AsyncResult<RestUtil.WrappedResponse> partialSuccessAsyncResult = getAsyncResult(response, null, true, false);
     Future future = Future.future();
     assertTrue(RestUtil.validateAsyncResult(partialSuccessAsyncResult, future));

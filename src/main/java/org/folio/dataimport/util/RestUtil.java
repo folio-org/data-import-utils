@@ -178,8 +178,7 @@ public final class RestUtil {
   }
 
   private static boolean isJson(AsyncResult<WrappedResponse> asyncResult) {
-    HttpClientResponse response = asyncResult.result().response;
-    return response != null && APPLICATION_JSON.equals(response.getHeader(CONTENT_TYPE));
+    return asyncResult.result().getJson() != null;
   }
 
   /**
