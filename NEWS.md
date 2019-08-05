@@ -1,3 +1,6 @@
+## 1.4.0-SNAPSHOT 2019-08-05
+* Fixed logic that determines whether http response contains json body 
+
 ## 1.3.0 2019-07-19
 * Added partial success case for async result validation
 * Added util methods for exceptions handling under async methods calls and response status checking
