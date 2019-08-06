@@ -1,5 +1,6 @@
 ## 1.4.0-SNAPSHOT 2019-08-05
-* Fixed logic that determines whether http response contains json body 
+* Fixed logic that determines whether http response contains json body
+* Removed validation for partial success case using 500 code and json body
 
 ## 1.3.0 2019-07-19
 * Added partial success case for async result validation

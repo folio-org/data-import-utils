@@ -19,8 +19,6 @@ import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 import java.util.Map;
 
-import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.folio.HttpStatus.HTTP_CREATED;
 import static org.folio.HttpStatus.HTTP_INTERNAL_SERVER_ERROR;
 import static org.folio.HttpStatus.HTTP_NOT_FOUND;
@@ -146,7 +144,7 @@ public final class RestUtil {
     } else if (isCode(asyncResult, HTTP_NOT_FOUND)) {
       LOGGER.error(STATUS_CODE_IS_NOT_SUCCESS_MSG, getCode(asyncResult));
       future.fail(new NotFoundException());
-    } else if (isCode(asyncResult, HTTP_INTERNAL_SERVER_ERROR) && !isJson(asyncResult)) {
+    } else if (isCode(asyncResult, HTTP_INTERNAL_SERVER_ERROR)) {
       LOGGER.error(STATUS_CODE_IS_NOT_SUCCESS_MSG, getCode(asyncResult));
       future.fail(new InternalServerErrorException());
     } else if (isSuccess(asyncResult)) {
@@ -165,50 +163,10 @@ public final class RestUtil {
   private static boolean isSuccess(AsyncResult<WrappedResponse> asyncResult) {
     return isCode(asyncResult, HTTP_OK)
       || isCode(asyncResult, HTTP_CREATED)
-      || isCode(asyncResult, HTTP_NO_CONTENT)
-      || isPartialSuccess(asyncResult);
+      || isCode(asyncResult, HTTP_NO_CONTENT);
   }
 
   private static boolean isCode(AsyncResult<WrappedResponse> asyncResult, HttpStatus status) {
     return getCode(asyncResult) == status.toInt();
-  }
-
-  private static boolean isPartialSuccess(AsyncResult<WrappedResponse> asyncResult) {
-    return isCode(asyncResult, HTTP_INTERNAL_SERVER_ERROR) && isJson(asyncResult);
-  }
-
-  private static boolean isJson(AsyncResult<WrappedResponse> asyncResult) {
-    return asyncResult.result().getJson() != null;
-  }
-
-  /**
-   * Checks whether the answer is partial successful
-   *
-   * @param response - http response
-   * @return - true if response status is "server error" and content type is "application/json", otherwise false
-   */
-  public static boolean isPartialSuccess(HttpClientResponse response) {
-    return isStatus(response, HTTP_INTERNAL_SERVER_ERROR) && isContentTypeJson(response);
-  }
-
-  /**
-   * Checks the response status for a match with the specified http status
-   *
-   * @param response - http response
-   * @param status   - http response status
-   * @return - true if response status is as specified http status, otherwise false
-   */
-  public static boolean isStatus(HttpClientResponse response, HttpStatus status) {
-    return response.statusCode() == status.toInt();
-  }
-
-  /**
-   * Checks whether response content type is "application/json"
-   *
-   * @param response - http response
-   * @return - true if response content type is "application/json", otherwise false
-   */
-  public static boolean isContentTypeJson(HttpClientResponse response) {
-    return APPLICATION_JSON.equals(response.getHeader(CONTENT_TYPE));
   }
 }
