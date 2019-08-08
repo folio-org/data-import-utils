@@ -8,23 +8,13 @@ import com.github.tomakehurst.wiremock.matching.RegexPattern;
 import com.github.tomakehurst.wiremock.matching.UrlPathPattern;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
-import io.vertx.core.buffer.Buffer;
-import io.vertx.core.http.HttpClientRequest;
-import io.vertx.core.http.HttpClientResponse;
-import io.vertx.core.http.HttpFrame;
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.http.HttpVersion;
-import io.vertx.core.http.impl.headers.VertxHttpHeaders;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.net.NetSocket;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.folio.rest.RestVerticle;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,12 +24,9 @@ import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.folio.dataimport.util.RestUtil.OKAPI_TENANT_HEADER;
 import static org.folio.dataimport.util.RestUtil.OKAPI_URL_HEADER;
 import static org.junit.Assert.assertFalse;
@@ -151,40 +138,6 @@ public class RestUtilTest {
     assertTrue(future.cause() instanceof BadRequestException);
   }
 
-  @Test
-  public void shouldValidatePartialSuccessAsyncResult() {
-    HttpClientResponseStub httpClientResponseStub = new HttpClientResponseStub();
-    httpClientResponseStub.headers().add(CONTENT_TYPE, APPLICATION_JSON);
-    RestUtil.WrappedResponse response = new RestUtil.WrappedResponse(500, "{\"instances\": []}", httpClientResponseStub);
-    AsyncResult<RestUtil.WrappedResponse> partialSuccessAsyncResult = getAsyncResult(response, null, true, false);
-    Future future = Future.future();
-    assertTrue(RestUtil.validateAsyncResult(partialSuccessAsyncResult, future));
-    assertFalse(future.isComplete());
-  }
-
-  @Test
-  public void shouldReturnTrueWhenResponseContentTypeIsJsonAndStatusServerError() {
-    HttpClientResponseStub responseStub = new HttpClientResponseStub();
-    responseStub.setStatusCode(500);
-    responseStub.headers().add(CONTENT_TYPE, APPLICATION_JSON);
-    Assert.assertTrue(RestUtil.isPartialSuccess(responseStub));
-  }
-
-  @Test
-  public void shouldReturnFalseWhenResponseContentTypeIsNotJson() {
-    HttpClientResponseStub responseStub = new HttpClientResponseStub();
-    responseStub.setStatusCode(500);
-    Assert.assertFalse(RestUtil.isPartialSuccess(responseStub));
-  }
-
-  @Test
-  public void shouldReturnFalseWhenResponseStatusIsNotServerError() {
-    HttpClientResponseStub responseStub = new HttpClientResponseStub();
-    responseStub.setStatusCode(200);
-    responseStub.headers().add(CONTENT_TYPE, APPLICATION_JSON);
-    Assert.assertFalse(RestUtil.isPartialSuccess(responseStub));
-  }
-
   private AsyncResult<RestUtil.WrappedResponse> getAsyncResult(RestUtil.WrappedResponse result, Throwable cause, boolean succeeded, boolean failed) {
     return new AsyncResult<RestUtil.WrappedResponse>() {
       @Override
@@ -207,106 +160,5 @@ public class RestUtilTest {
         return failed;
       }
     };
-  }
-
-  class HttpClientResponseStub implements HttpClientResponse {
-
-    private MultiMap headers = new VertxHttpHeaders();
-
-    private int statusCode;
-
-    @Override
-    public HttpClientResponse resume() {
-      return null;
-    }
-
-    @Override
-    public HttpClientResponse exceptionHandler(Handler<Throwable> handler) {
-      return null;
-    }
-
-    @Override
-    public HttpClientResponse handler(Handler<Buffer> handler) {
-      return null;
-    }
-
-    @Override
-    public HttpClientResponse pause() {
-      return null;
-    }
-
-    @Override
-    public HttpClientResponse endHandler(Handler<Void> endHandler) {
-      return null;
-    }
-
-    @Override
-    public HttpVersion version() {
-      return null;
-    }
-
-    @Override
-    public int statusCode() {
-      return statusCode;
-    }
-
-    public void setStatusCode(int code) {
-      this.statusCode = code;
-    }
-
-    @Override
-    public String statusMessage() {
-      return null;
-    }
-
-    @Override
-    public MultiMap headers() {
-      return headers;
-    }
-
-    @Override
-    public String getHeader(String headerName) {
-      return headers.get(headerName);
-    }
-
-    @Override
-    public String getHeader(CharSequence headerName) {
-      return headers().get(headerName);
-    }
-
-    @Override
-    public String getTrailer(String trailerName) {
-      return null;
-    }
-
-    @Override
-    public MultiMap trailers() {
-      return null;
-    }
-
-    @Override
-    public List<String> cookies() {
-      return null;
-    }
-
-    @Override
-    public HttpClientResponse bodyHandler(Handler<Buffer> bodyHandler) {
-      return null;
-    }
-
-    @Override
-    public HttpClientResponse customFrameHandler(Handler<HttpFrame> handler) {
-      return null;
-    }
-
-    @Override
-    public NetSocket netSocket() {
-      return null;
-    }
-
-    @Override
-    public HttpClientRequest request() {
-      return null;
-    }
   }
 }
