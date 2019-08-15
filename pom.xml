@@ -22,7 +22,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <vertx.version>3.5.4</vertx.version>
     <mod-configuration-client.version>4.0.3</mod-configuration-client.version>
-    <raml-module-builder.version>23.0.0</raml-module-builder.version>
+    <raml-module-builder.version>26.4.0</raml-module-builder.version>
     <junit.version>4.12</junit.version>
     <powermock.version>1.7.1</powermock.version>
   </properties>
@@ -69,6 +69,11 @@
           <artifactId>jopt-simple</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.9</version>
     </dependency>
   </dependencies>
 
