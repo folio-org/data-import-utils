@@ -11,9 +11,10 @@ public class DaoUtilTest {
   @Test
   public void shouldConstructCriteria() {
     String id = "000000000000000";
-    String expectedQuery = "(jsonb->>id) = '" + id + "'";
     Criteria criteria = DaoUtil.constructCriteria("id", id);
     assertNotNull(criteria);
-    assertEquals(expectedQuery, criteria.toString());
+    assertEquals("id", criteria.getField().get(0));
+    assertEquals("=", criteria.getOperation());
+    assertEquals(id, criteria.getValue());
   }
 }

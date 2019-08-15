@@ -1,11 +1,10 @@
 package org.folio.dataimport.util;
 
-import org.folio.cql2pgjson.exception.FieldException;
 import org.folio.rest.persist.Criteria.Criteria;
 import org.folio.rest.persist.Criteria.Limit;
 import org.folio.rest.persist.Criteria.Offset;
 import org.folio.rest.persist.cql.CQLWrapper;
-import org.folio.cql2pgjson.CQL2PgJSON;
+import org.z3950.zing.cql.cql2pgjson.CQL2PgJSON;
 
 public final class DaoUtil {
 
@@ -18,9 +17,10 @@ public final class DaoUtil {
    * @param query - query from URL
    * @param limit - limit of results for pagination
    * @return - CQL wrapper for building postgres request to database
-   * @throws FieldException field exception
+   * @throws org.z3950.zing.cql.cql2pgjson.FieldException field exception
    */
-  public static CQLWrapper getCQLWrapper(String tableName, String query, int limit, int offset) throws FieldException {
+  public static CQLWrapper getCQLWrapper(String tableName, String query, int limit, int offset)
+    throws org.z3950.zing.cql.cql2pgjson.FieldException {
     return getCQLWrapper(tableName, query)
       .setLimit(new Limit(limit))
       .setOffset(new Offset(offset));
@@ -31,9 +31,10 @@ public final class DaoUtil {
    *
    * @param query - query from URL
    * @return - CQL wrapper for building postgres request to database
-   * @throws FieldException field exception
+   * @throws org.z3950.zing.cql.cql2pgjson.FieldException field exception
    */
-  public static CQLWrapper getCQLWrapper(String tableName, String query) throws FieldException {
+  public static CQLWrapper getCQLWrapper(String tableName, String query)
+    throws org.z3950.zing.cql.cql2pgjson.FieldException {
     CQL2PgJSON cql2pgJson = new CQL2PgJSON(tableName + ".jsonb");
     return new CQLWrapper(cql2pgJson, query);
   }
@@ -49,7 +50,7 @@ public final class DaoUtil {
     Criteria criteria = new Criteria();
     criteria.addField(jsonbField);
     criteria.setOperation("=");
-    criteria.setVal(value);
+    criteria.setValue(value);
     return criteria;
   }
 }
