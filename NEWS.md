@@ -1,4 +1,4 @@
-## 1.4.0-SNAPSHOT 2019-08-05
+## 1.4.0 2019-09-09
 * Fixed logic that determines whether http response contains json body
 * Removed validation for partial success case using 500 code and json body
 
