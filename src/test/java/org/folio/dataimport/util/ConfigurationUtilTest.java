@@ -66,7 +66,6 @@ public class ConfigurationUtilTest {
 
     ConfigurationUtil.getPropertyByCode("", params).setHandler(stringAsyncResult -> {
       assertTrue(stringAsyncResult.failed());
-      assertTrue(stringAsyncResult.cause().getMessage().contains("Could not parse okapiURL"));
     });
   }
 
