@@ -1,3 +1,7 @@
+## 1.5.0 2019-11-25
+* Updated RAML Module Builder version to 27.1.1
+* Updated mod-configuration-client version to 5.1.0
+
 ## 1.4.0 2019-09-09
 * Fixed logic that determines whether http response contains json body
 * Removed validation for partial success case using 500 code and json body
