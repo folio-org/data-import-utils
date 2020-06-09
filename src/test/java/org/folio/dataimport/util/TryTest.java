@@ -22,7 +22,9 @@ public class TryTest {
   @Test
   public void shouldReturnFailedFutureWhenTaskThrewException() {
     RuntimeException taskException = new RuntimeException();
-    Try.itGet(() -> {throw taskException;})
+    Try.itGet(() -> {
+      throw taskException;
+    })
       .onComplete(ar -> {
         Assert.assertTrue(ar.failed());
         Assert.assertSame(ar.cause(), taskException);
@@ -41,7 +43,9 @@ public class TryTest {
   @Test
   public void shouldReturnFailedFutureWhenJobThrewException() {
     RuntimeException jobException = new RuntimeException();
-    Try.itDo(future -> {throw jobException;})
+    Try.itDo(future -> {
+      throw jobException;
+    })
       .onComplete(ar -> {
         Assert.assertTrue(ar.failed());
         Assert.assertSame(ar.cause(), jobException);

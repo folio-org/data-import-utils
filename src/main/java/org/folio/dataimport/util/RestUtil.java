@@ -131,7 +131,7 @@ public final class RestUtil {
    * Validate http response and fail future if necessary
    *
    * @param asyncResult - http response callback
-   * @param promise      - future of callback
+   * @param promise     - future of callback
    * @return - boolean value is response ok
    */
   public static boolean validateAsyncResult(AsyncResult<WrappedResponse> asyncResult, Promise promise) {

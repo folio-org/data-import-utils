@@ -1,9 +1,9 @@
 package org.folio.dataimport.util.marc;
 
-import static org.junit.Assert.assertEquals;
-
 import io.vertx.core.json.JsonObject;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class MarcRecordAnalyzerTest {
 

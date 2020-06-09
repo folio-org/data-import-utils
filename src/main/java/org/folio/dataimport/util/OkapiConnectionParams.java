@@ -2,7 +2,6 @@ package org.folio.dataimport.util;
 
 import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
-import io.vertx.core.http.CaseInsensitiveHeaders;
 import io.vertx.core.http.impl.headers.VertxHttpHeaders;
 
 import java.util.Map;

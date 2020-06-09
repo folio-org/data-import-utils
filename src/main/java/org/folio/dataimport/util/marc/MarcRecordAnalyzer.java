@@ -1,16 +1,15 @@
 package org.folio.dataimport.util.marc;
 
-
-import static java.util.Arrays.asList;
+import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
+import static java.util.Arrays.asList;
 
 public class MarcRecordAnalyzer implements RecordAnalyzer {
   private static final Logger LOGGER = LoggerFactory.getLogger(MarcRecordAnalyzer.class);
