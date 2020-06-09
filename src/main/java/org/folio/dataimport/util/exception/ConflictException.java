@@ -2,7 +2,6 @@ package org.folio.dataimport.util.exception;
 
 /**
  * A runtime exception indicating a request conflict with current server state.
- *
  */
 public class ConflictException extends RuntimeException {
 

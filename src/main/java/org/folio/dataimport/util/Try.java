@@ -1,6 +1,7 @@
 package org.folio.dataimport.util;
 
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
 
 import java.util.function.Supplier;
 
@@ -19,13 +20,13 @@ public class Try {
    * @return future with result from {@code task} execution
    */
   public static <T> Future<T> itGet(Supplier<T> task) {
-    Future<T> future = Future.future();
+    Promise<T> promise = Promise.promise();
     try {
-      future.complete(task.get());
+      promise.complete(task.get());
     } catch (Exception e) {
-      future.fail(e);
+      promise.fail(e);
     }
-    return future;
+    return promise.future();
   }
 
   /**
@@ -35,14 +36,14 @@ public class Try {
    * @param job job
    * @return return handled future by specified job
    */
-  public static <T> Future<T> itDo(Job<Future<T>> job) {
-    Future<T> future = Future.future();
+  public static <T> Future<T> itDo(Job<Promise<T>> job) {
+    Promise<T> promise = Promise.promise();
     try {
-      job.accept(future);
+      job.accept(promise);
     } catch (Exception e) {
-      future.fail(e);
+      promise.fail(e);
     }
-    return future;
+    return promise.future();
   }
 
   /**

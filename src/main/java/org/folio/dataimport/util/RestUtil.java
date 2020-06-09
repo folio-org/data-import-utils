@@ -3,7 +3,8 @@ package org.folio.dataimport.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
-import io.vertx.core.http.CaseInsensitiveHeaders;
+import io.vertx.core.MultiMap;
+import io.vertx.core.Promise;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.http.HttpClientRequest;
@@ -84,9 +85,9 @@ public final class RestUtil {
    */
   public static <T> Future<WrappedResponse> doRequest(OkapiConnectionParams params, String url,
                                                       HttpMethod method, T payload) {
-    Future<WrappedResponse> future = Future.future();
+    Promise<WrappedResponse> promise = Promise.promise();
     try {
-      CaseInsensitiveHeaders headers = params.getHeaders();
+      MultiMap headers = params.getHeaders();
       String requestUrl = params.getOkapiUrl() + url;
       HttpClientRequest request = getHttpClient(params).requestAbs(method, requestUrl);
       if (headers != null) {
@@ -96,20 +97,20 @@ public final class RestUtil {
           request.putHeader((String) entry.getKey(), (String) entry.getValue());
         }
       }
-      request.exceptionHandler(future::fail);
+      request.exceptionHandler(promise::fail);
       request.handler(req -> req.bodyHandler(buf -> {
         WrappedResponse wr = new WrappedResponse(req.statusCode(), buf.toString(), req);
-        future.complete(wr);
+        promise.complete(wr);
       }));
       if (method == HttpMethod.PUT || method == HttpMethod.POST) {
         request.end(new ObjectMapper().writeValueAsString(payload));
       } else {
         request.end();
       }
-      return future;
+      return promise.future();
     } catch (Exception e) {
-      future.fail(e);
-      return future;
+      promise.fail(e);
+      return promise.future();
     }
   }
 
@@ -130,28 +131,28 @@ public final class RestUtil {
    * Validate http response and fail future if necessary
    *
    * @param asyncResult - http response callback
-   * @param future      - future of callback
+   * @param promise     - future of callback
    * @return - boolean value is response ok
    */
-  public static boolean validateAsyncResult(AsyncResult<WrappedResponse> asyncResult, Future future) {
+  public static boolean validateAsyncResult(AsyncResult<WrappedResponse> asyncResult, Promise promise) {
     boolean result = false;
     if (asyncResult.failed()) {
       LOGGER.error("Error during HTTP request: {}", asyncResult.cause());
-      future.fail(asyncResult.cause());
+      promise.fail(asyncResult.cause());
     } else if (asyncResult.result() == null) {
       LOGGER.error("Error during get response");
-      future.fail(new BadRequestException());
+      promise.fail(new BadRequestException());
     } else if (isCode(asyncResult, HTTP_NOT_FOUND)) {
       LOGGER.error(STATUS_CODE_IS_NOT_SUCCESS_MSG, getCode(asyncResult));
-      future.fail(new NotFoundException());
+      promise.fail(new NotFoundException());
     } else if (isCode(asyncResult, HTTP_INTERNAL_SERVER_ERROR)) {
       LOGGER.error(STATUS_CODE_IS_NOT_SUCCESS_MSG, getCode(asyncResult));
-      future.fail(new InternalServerErrorException());
+      promise.fail(new InternalServerErrorException());
     } else if (isSuccess(asyncResult)) {
       result = true;
     } else {
       LOGGER.error(STATUS_CODE_IS_NOT_SUCCESS_MSG, getCode(asyncResult));
-      future.fail(new BadRequestException());
+      promise.fail(new BadRequestException());
     }
     return result;
   }

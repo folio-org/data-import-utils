@@ -8,6 +8,7 @@ import com.github.tomakehurst.wiremock.matching.RegexPattern;
 import com.github.tomakehurst.wiremock.matching.UrlPathPattern;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
@@ -56,7 +57,7 @@ public class RestUtilTest {
       .willReturn(WireMock.ok()));
 
     Future<RestUtil.WrappedResponse> future = RestUtil.doRequest(params, "/change-manager/jobExecution/" + UUID.randomUUID(), HttpMethod.PUT, new JsonObject());
-    future.setHandler(response -> {
+    future.onComplete(response -> {
       assertTrue(response.succeeded());
       assertNotNull(response.result());
       async.complete();
@@ -66,76 +67,76 @@ public class RestUtilTest {
   @Test
   public void shouldValidateFailedAsyncResult() {
     AsyncResult<RestUtil.WrappedResponse> failedAsyncResult = getAsyncResult(null, new IOException(), false, true);
-    Future future = Future.future();
-    assertFalse(RestUtil.validateAsyncResult(failedAsyncResult, future));
-    assertTrue(future.failed());
-    assertTrue(future.cause() instanceof IOException);
+    Promise promise = Promise.promise();
+    assertFalse(RestUtil.validateAsyncResult(failedAsyncResult, promise));
+    assertTrue(promise.future().failed());
+    assertTrue(promise.future().cause() instanceof IOException);
   }
 
   @Test
   public void shouldValidateNullAsyncResult() {
     AsyncResult<RestUtil.WrappedResponse> nullAsyncResult = getAsyncResult(null, null, true, false);
-    Future future = Future.future();
-    assertFalse(RestUtil.validateAsyncResult(nullAsyncResult, future));
-    assertTrue(future.failed());
-    assertTrue(future.cause() instanceof BadRequestException);
+    Promise promise = Promise.promise();
+    assertFalse(RestUtil.validateAsyncResult(nullAsyncResult, promise));
+    assertTrue(promise.future().failed());
+    assertTrue(promise.future().cause() instanceof BadRequestException);
   }
 
   @Test
   public void shouldValidateNotFoundAsyncResult() {
     RestUtil.WrappedResponse response = new RestUtil.WrappedResponse(404, "", null);
     AsyncResult<RestUtil.WrappedResponse> notFoundAsyncResult = getAsyncResult(response, null, true, false);
-    Future future = Future.future();
-    assertFalse(RestUtil.validateAsyncResult(notFoundAsyncResult, future));
-    assertTrue(future.failed());
-    assertTrue(future.cause() instanceof NotFoundException);
+    Promise promise = Promise.promise();
+    assertFalse(RestUtil.validateAsyncResult(notFoundAsyncResult, promise));
+    assertTrue(promise.future().failed());
+    assertTrue(promise.future().cause() instanceof NotFoundException);
   }
 
   @Test
   public void shouldValidateInternalErrorAsyncResult() {
     RestUtil.WrappedResponse response = new RestUtil.WrappedResponse(500, "", null);
     AsyncResult<RestUtil.WrappedResponse> internalErrorAsyncResult = getAsyncResult(response, null, true, false);
-    Future future = Future.future();
-    assertFalse(RestUtil.validateAsyncResult(internalErrorAsyncResult, future));
-    assertTrue(future.failed());
-    assertTrue(future.cause() instanceof InternalServerErrorException);
+    Promise promise = Promise.promise();
+    assertFalse(RestUtil.validateAsyncResult(internalErrorAsyncResult, promise));
+    assertTrue(promise.future().failed());
+    assertTrue(promise.future().cause() instanceof InternalServerErrorException);
   }
 
   @Test
   public void shouldValidateOKAsyncResult() {
     RestUtil.WrappedResponse response = new RestUtil.WrappedResponse(200, "", null);
     AsyncResult<RestUtil.WrappedResponse> okAsyncResult = getAsyncResult(response, null, true, false);
-    Future future = Future.future();
-    assertTrue(RestUtil.validateAsyncResult(okAsyncResult, future));
-    assertFalse(future.isComplete());
+    Promise promise = Promise.promise();
+    assertTrue(RestUtil.validateAsyncResult(okAsyncResult, promise));
+    assertFalse(promise.future().isComplete());
   }
 
   @Test
   public void shouldValidateCreatedAsyncResult() {
     RestUtil.WrappedResponse response = new RestUtil.WrappedResponse(201, "", null);
     AsyncResult<RestUtil.WrappedResponse> createdAsyncResult = getAsyncResult(response, null, true, false);
-    Future future = Future.future();
-    assertTrue(RestUtil.validateAsyncResult(createdAsyncResult, future));
-    assertFalse(future.isComplete());
+    Promise promise = Promise.promise();
+    assertTrue(RestUtil.validateAsyncResult(createdAsyncResult, promise));
+    assertFalse(promise.future().isComplete());
   }
 
   @Test
   public void shouldValidateNoContentAsyncResult() {
     RestUtil.WrappedResponse response = new RestUtil.WrappedResponse(204, "", null);
     AsyncResult<RestUtil.WrappedResponse> noContentAsyncResult = getAsyncResult(response, null, true, false);
-    Future future = Future.future();
-    assertTrue(RestUtil.validateAsyncResult(noContentAsyncResult, future));
-    assertFalse(future.isComplete());
+    Promise promise = Promise.promise();
+    assertTrue(RestUtil.validateAsyncResult(noContentAsyncResult, promise));
+    assertFalse(promise.future().isComplete());
   }
 
   @Test
   public void shouldValidateBadRequestAsyncResult() {
     RestUtil.WrappedResponse response = new RestUtil.WrappedResponse(422, null, null);
     AsyncResult<RestUtil.WrappedResponse> badRequestAsyncResult = getAsyncResult(response, null, true, false);
-    Future future = Future.future();
-    assertFalse(RestUtil.validateAsyncResult(badRequestAsyncResult, future));
-    assertTrue(future.failed());
-    assertTrue(future.cause() instanceof BadRequestException);
+    Promise promise = Promise.promise();
+    assertFalse(RestUtil.validateAsyncResult(badRequestAsyncResult, promise));
+    assertTrue(promise.future().failed());
+    assertTrue(promise.future().cause() instanceof BadRequestException);
   }
 
   private AsyncResult<RestUtil.WrappedResponse> getAsyncResult(RestUtil.WrappedResponse result, Throwable cause, boolean succeeded, boolean failed) {
