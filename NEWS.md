@@ -1,3 +1,6 @@
+## 1.6.0 2020-06-09
+* Updated RAML Module Builder version to 30.0.2
+
 ## 1.5.0 2019-11-25
 * Updated RAML Module Builder version to 27.1.1
 * Updated mod-configuration-client version to 5.1.0
