@@ -1,7 +1,9 @@
 package org.folio.dataimport.util;
 
+import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.CaseInsensitiveHeaders;
+import io.vertx.core.http.impl.headers.VertxHttpHeaders;
 
 import java.util.Map;
 
@@ -20,7 +22,7 @@ public final class OkapiConnectionParams {
   private String token;
   private Vertx vertx;
   private Integer timeout;
-  private CaseInsensitiveHeaders headers = new CaseInsensitiveHeaders();
+  private MultiMap headers = new VertxHttpHeaders();
 
   public OkapiConnectionParams(Map<String, String> okapiHeaders, Vertx vertx, Integer timeout) {
     this.okapiUrl = okapiHeaders.getOrDefault(OKAPI_URL_HEADER, "localhost");
@@ -55,11 +57,11 @@ public final class OkapiConnectionParams {
     return timeout;
   }
 
-  public CaseInsensitiveHeaders getHeaders() {
+  public MultiMap getHeaders() {
     return headers;
   }
 
-  public void setHeaders(CaseInsensitiveHeaders headers) {
+  public void setHeaders(MultiMap headers) {
     this.headers = headers;
   }
 }

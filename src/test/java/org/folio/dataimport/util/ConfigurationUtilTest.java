@@ -64,7 +64,7 @@ public class ConfigurationUtilTest {
     okapiHeaders.put(OKAPI_URL_HEADER, "localhost:");
     OkapiConnectionParams params = new OkapiConnectionParams(okapiHeaders, Vertx.vertx());
 
-    ConfigurationUtil.getPropertyByCode("", params).setHandler(stringAsyncResult -> {
+    ConfigurationUtil.getPropertyByCode("", params).onComplete(stringAsyncResult -> {
       assertTrue(stringAsyncResult.failed());
     });
   }
@@ -78,7 +78,7 @@ public class ConfigurationUtilTest {
       + "&offset=0&limit=3&").willReturn(WireMock.okJson(config.toString())));
 
     Future<String> future = ConfigurationUtil.getPropertyByCode(code, params);
-    future.setHandler(stringAsyncResult -> {
+    future.onComplete(stringAsyncResult -> {
       assertTrue(stringAsyncResult.succeeded());
       assertEquals(value, stringAsyncResult.result());
       async.complete();
@@ -94,7 +94,7 @@ public class ConfigurationUtilTest {
       + "&offset=0&limit=3&").willReturn(WireMock.serverError()));
 
     Future<String> future = ConfigurationUtil.getPropertyByCode(code, params);
-    future.setHandler(stringAsyncResult -> {
+    future.onComplete(stringAsyncResult -> {
       assertTrue(stringAsyncResult.failed());
       assertTrue(stringAsyncResult.cause().getMessage().contains("Expected status code 200, got '500'"));
       async.complete();
@@ -110,7 +110,7 @@ public class ConfigurationUtilTest {
       + "&offset=0&limit=3&").willReturn(WireMock.okJson(new JsonObject().put("totalRecords", 0).toString())));
 
     Future<String> future = ConfigurationUtil.getPropertyByCode(code, params);
-    future.setHandler(stringAsyncResult -> {
+    future.onComplete(stringAsyncResult -> {
       assertTrue(stringAsyncResult.failed());
       assertTrue(stringAsyncResult.cause().getMessage().contains("No config values was found"));
       async.complete();

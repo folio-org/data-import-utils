@@ -1,8 +1,11 @@
 package org.folio.dataimport.util;
 
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
 import org.folio.rest.client.ConfigurationsClient;
+
+import static java.lang.String.format;
 
 /**
  * Util for loading configuration values from mod-configuration
@@ -21,7 +24,7 @@ public final class ConfigurationUtil {
    * @return a list of user fields to use for search
    */
   public static Future<String> getPropertyByCode(String code, OkapiConnectionParams params) {
-    Future<String> future = Future.future();
+    Promise<String> promise = Promise.promise();
     String okapiURL = params.getOkapiUrl();
     String tenant = params.getTenantId();
     String token = params.getToken();
@@ -35,26 +38,25 @@ public final class ConfigurationUtil {
       configurationsClient.getConfigurationsEntries(query.toString(), 0, 3, null, null, response ->
         response.bodyHandler(body -> {
           if (response.statusCode() != 200) {
-            future.fail("Expected status code 200, got '" + response.statusCode() +
-              "' :" + body.toString());
+            promise.fail(format("Expected status code 200, got '%s' : %s", response.statusCode(), body.toString()));
             return;
           }
           JsonObject entries = body.toJsonObject();
           Integer total = entries.getInteger("totalRecords");
           if (total != null && total > 0) {
-            future.complete(
+            promise.complete(
               entries.getJsonArray("configs")
                 .getJsonObject(0)
                 .getString("value"));
           } else {
-            future.fail("No config values was found");
+            promise.fail("No config values was found");
           }
         })
       );
     } catch (Exception e) {
-      future.fail(e);
+      promise.fail(e);
     }
-    return future;
+    return promise.future();
   }
 
 }

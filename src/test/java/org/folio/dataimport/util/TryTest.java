@@ -13,7 +13,7 @@ public class TryTest {
   @Test
   public void shouldReturnSucceededFutureWhenTaskReturnedResult() {
     Try.itGet(() -> RESULT_STRING)
-      .setHandler(ar -> {
+      .onComplete(ar -> {
         Assert.assertTrue(ar.succeeded());
         Assert.assertEquals(RESULT_STRING, ar.result());
       });
@@ -23,7 +23,7 @@ public class TryTest {
   public void shouldReturnFailedFutureWhenTaskThrewException() {
     RuntimeException taskException = new RuntimeException();
     Try.itGet(() -> {throw taskException;})
-      .setHandler(ar -> {
+      .onComplete(ar -> {
         Assert.assertTrue(ar.failed());
         Assert.assertSame(ar.cause(), taskException);
       });
@@ -32,7 +32,7 @@ public class TryTest {
   @Test
   public void shouldReturnSucceededFutureWhenJobReturnedResult() {
     Try.itDo(future -> future.complete(RESULT_STRING))
-      .setHandler(ar -> {
+      .onComplete(ar -> {
         Assert.assertTrue(ar.succeeded());
         Assert.assertEquals(RESULT_STRING, ar.result());
       });
@@ -42,7 +42,7 @@ public class TryTest {
   public void shouldReturnFailedFutureWhenJobThrewException() {
     RuntimeException jobException = new RuntimeException();
     Try.itDo(future -> {throw jobException;})
-      .setHandler(ar -> {
+      .onComplete(ar -> {
         Assert.assertTrue(ar.failed());
         Assert.assertSame(ar.cause(), jobException);
       });
