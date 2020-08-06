@@ -5,6 +5,7 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Promise;
+import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.http.HttpClientRequest;
@@ -124,7 +125,7 @@ public final class RestUtil {
     HttpClientOptions options = new HttpClientOptions();
     options.setConnectTimeout(params.getTimeout());
     options.setIdleTimeout(params.getTimeout());
-    return params.getVertx().createHttpClient(options);
+    return Vertx.currentContext().owner().createHttpClient(options);
   }
 
   /**
