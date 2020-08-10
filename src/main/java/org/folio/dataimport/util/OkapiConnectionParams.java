@@ -16,11 +16,12 @@ import static org.folio.dataimport.util.RestUtil.OKAPI_URL_HEADER;
 public final class OkapiConnectionParams {
 
   private static final int DEF_TIMEOUT = 2000;
-  private String okapiUrl;
-  private String tenantId;
-  private String token;
-  private Vertx vertx;
-  private Integer timeout;
+  private final String okapiUrl;
+  private final String tenantId;
+  private final String token;
+  @Deprecated
+  private final Vertx vertx;
+  private final Integer timeout;
   private MultiMap headers = new VertxHttpHeaders();
 
   public OkapiConnectionParams(Map<String, String> okapiHeaders, Vertx vertx, Integer timeout) {
@@ -48,7 +49,10 @@ public final class OkapiConnectionParams {
     return token;
   }
 
+  @Deprecated
   public Vertx getVertx() {
+    //TODO: in all places where you need Vertx instance use Vertx.currentContext().owner()
+    //Do not ever use Vertx.vertx(); it create a completely new Vertx instance
     return vertx;
   }
 

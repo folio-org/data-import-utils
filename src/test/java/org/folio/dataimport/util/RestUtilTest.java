@@ -14,6 +14,7 @@ import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
+import io.vertx.ext.unit.junit.RunTestOnContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.folio.rest.RestVerticle;
 import org.junit.Rule;
@@ -36,6 +37,8 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(VertxUnitRunner.class)
 public class RestUtilTest {
+  @Rule
+  public RunTestOnContext rule = new RunTestOnContext();
 
   @Rule
   public WireMockRule mockServer = new WireMockRule(
