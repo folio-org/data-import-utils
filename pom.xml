@@ -22,7 +22,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <vertx.version>3.9.1</vertx.version>
     <mod-configuration-client.version>5.1.0</mod-configuration-client.version>
-    <raml-module-builder.version>30.0.2</raml-module-builder.version>
+    <raml-module-builder.version>31.0.2</raml-module-builder.version>
     <junit.version>4.12</junit.version>
     <powermock.version>1.7.1</powermock.version>
   </properties>

@@ -1,3 +1,6 @@
+## 1.7.0 2020-09-23
+* Upgraded RAML Module Builder version to 31.0.2
+
 ## 1.6.0 2020-06-09
 * Updated RAML Module Builder version to 30.0.2
 
