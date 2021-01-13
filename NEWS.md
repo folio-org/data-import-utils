@@ -1,3 +1,6 @@
+## 1.7.0 2021-01-12
+* [MODDATAIMP-351](https://issues.folio.org/browse/MODDATAIMP-351) Upgrade data-import-utils to Java 11.
+
 ## 1.6.0 2020-06-09
 * Updated RAML Module Builder version to 30.0.2
 
