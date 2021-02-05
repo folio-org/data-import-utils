@@ -1,6 +1,6 @@
 package org.folio.dataimport.util.test;
 
-import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
 
 /**
@@ -8,7 +8,7 @@ import io.vertx.core.json.JsonObject;
  */
 class StubObject {
 
-  void targetMethod(Future<JsonObject> future) { // NOSONAR
+  void targetMethod(Promise<JsonObject> promise) { // NOSONAR
     // no implementation
   }
 }

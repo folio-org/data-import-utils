@@ -3,6 +3,7 @@ package org.folio.dataimport.util;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
+
 import org.folio.rest.client.ConfigurationsClient;
 
 import static java.lang.String.format;
@@ -35,24 +36,22 @@ public final class ConfigurationUtil {
         .append(" AND ( code==\"")
         .append(code)
         .append("\")");
-      configurationsClient.getConfigurationsEntries(query.toString(), 0, 3, null, null, response ->
-        response.bodyHandler(body -> {
-          if (response.statusCode() != 200) {
-            promise.fail(format("Expected status code 200, got '%s' : %s", response.statusCode(), body.toString()));
-            return;
-          }
-          JsonObject entries = body.toJsonObject();
-          Integer total = entries.getInteger("totalRecords");
-          if (total != null && total > 0) {
-            promise.complete(
-              entries.getJsonArray("configs")
-                .getJsonObject(0)
-                .getString("value"));
-          } else {
-            promise.fail("No config values was found");
-          }
-        })
-      );
+      configurationsClient.getConfigurationsEntries(query.toString(), 0, 3, null, null, response -> {
+        if (response.result().statusCode() != 200) {
+          promise.fail(format("Expected status code 200, got '%s' : %s", response.result().statusCode(), response.result().bodyAsString()));
+          return;
+        }
+        JsonObject entries = response.result().bodyAsJsonObject();
+        Integer total = entries.getInteger("totalRecords");
+        if (total != null && total > 0) {
+          promise.complete(
+            entries.getJsonArray("configs")
+              .getJsonObject(0)
+              .getString("value"));
+        } else {
+          promise.fail("No config values was found");
+        }
+      });
     } catch (Exception e) {
       promise.fail(e);
     }
