@@ -40,7 +40,7 @@ public class MarcRecordAnalyzer implements RecordAnalyzer {
     try {
       return isMarcRecord(record) ? record.getString(LEADER_KEY).charAt(RECORD_TYPE_INDEX) : Character.MIN_VALUE;
     } catch (Exception e) {
-      LOGGER.error("I could not get a record type character form the leader: {}",record.getString(LEADER_KEY), e );
+      LOGGER.error("Can`t get a record type character form the leader: {}",record.getString(LEADER_KEY), e );
       return Character.MIN_VALUE;
     }
   }
