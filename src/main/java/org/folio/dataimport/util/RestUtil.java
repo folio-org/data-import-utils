@@ -1,24 +1,31 @@
 package org.folio.dataimport.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
+import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
-import io.vertx.core.http.HttpClientRequest;
 import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.ext.web.client.HttpRequest;
+import io.vertx.ext.web.client.HttpResponse;
+import io.vertx.ext.web.client.WebClient;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.folio.HttpStatus;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
+
 import java.util.Map;
 
 import static org.folio.HttpStatus.HTTP_CREATED;
@@ -35,17 +42,17 @@ public final class RestUtil {
   public static final String OKAPI_TENANT_HEADER = "x-okapi-tenant";
   public static final String OKAPI_TOKEN_HEADER = "x-okapi-token";
   public static final String OKAPI_URL_HEADER = "x-okapi-url";
-  private static final Logger LOGGER = LoggerFactory.getLogger(RestUtil.class);
+  private static final Logger LOGGER = LogManager.getLogger();
   private static final String STATUS_CODE_IS_NOT_SUCCESS_MSG = "Response HTTP code is not equals 200, 201, 204. Response code: {}";
 
   public static class WrappedResponse {
     private int code;
     private String body;
     private JsonObject json;
-    private HttpClientResponse response;
+    private HttpResponse<Buffer> response;
 
     WrappedResponse(int code, String body,
-                    HttpClientResponse response) {
+                    HttpResponse<Buffer> response) {
       this.code = code;
       this.body = body;
       this.response = response;
@@ -64,7 +71,7 @@ public final class RestUtil {
       return body;
     }
 
-    public HttpClientResponse getResponse() {
+    public HttpResponse<Buffer> getResponse() {
       return response;
     }
 
@@ -90,7 +97,8 @@ public final class RestUtil {
     try {
       MultiMap headers = params.getHeaders();
       String requestUrl = params.getOkapiUrl() + url;
-      HttpClientRequest request = getHttpClient(params).requestAbs(method, requestUrl);
+      WebClient client = WebClient.wrap(getHttpClient(params));
+      HttpRequest<Buffer> request = client.requestAbs(method, requestUrl);
       if (headers != null) {
         headers.add("Content-type", "application/json")
           .add("Accept", "application/json, text/plain");
@@ -98,15 +106,10 @@ public final class RestUtil {
           request.putHeader((String) entry.getKey(), (String) entry.getValue());
         }
       }
-      request.exceptionHandler(promise::fail);
-      request.handler(req -> req.bodyHandler(buf -> {
-        WrappedResponse wr = new WrappedResponse(req.statusCode(), buf.toString(), req);
-        promise.complete(wr);
-      }));
       if (method == HttpMethod.PUT || method == HttpMethod.POST) {
-        request.end(new ObjectMapper().writeValueAsString(payload));
+        request.sendBuffer(Buffer.buffer(new ObjectMapper().writeValueAsString(payload)), handleResponse(promise));
       } else {
-        request.end();
+        request.send(handleResponse(promise));
       }
       return promise.future();
     } catch (Exception e) {
@@ -170,5 +173,16 @@ public final class RestUtil {
 
   private static boolean isCode(AsyncResult<WrappedResponse> asyncResult, HttpStatus status) {
     return getCode(asyncResult) == status.toInt();
+  }
+
+  private static Handler<AsyncResult<HttpResponse<Buffer>>> handleResponse(Promise<WrappedResponse> promise) {
+    return ar -> {
+      if (ar.succeeded()) {
+        WrappedResponse wr = new WrappedResponse(ar.result().statusCode(), ar.result().bodyAsString(), ar.result());
+        promise.complete(wr);
+      } else {
+        promise.fail(ar.cause());
+      }
+    };
   }
 }

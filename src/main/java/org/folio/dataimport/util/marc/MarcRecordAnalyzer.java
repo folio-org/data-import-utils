@@ -1,8 +1,8 @@
 package org.folio.dataimport.util.marc;
 
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -12,7 +12,7 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 
 public class MarcRecordAnalyzer implements RecordAnalyzer {
-  private static final Logger LOGGER = LoggerFactory.getLogger(MarcRecordAnalyzer.class);
+  private static final Logger LOGGER = LogManager.getLogger();
   private static final String LEADER_KEY = "leader";
   private static final int RECORD_TYPE_INDEX = 5;
   private static final Set<Character> BIB_CODES = new HashSet<>(asList('a', 'c', 'd', 'e', 'f', 'g', 'i', 'j', 'k', 'm', 'o', 'p', 'r', 't'));
@@ -40,7 +40,7 @@ public class MarcRecordAnalyzer implements RecordAnalyzer {
     try {
       return isMarcRecord(record) ? record.getString(LEADER_KEY).charAt(RECORD_TYPE_INDEX) : Character.MIN_VALUE;
     } catch (Exception e) {
-      LOGGER.error("I could not get a record type character form the leader: {}", e, record.getString(LEADER_KEY));
+      LOGGER.error("I could not get a record type character form the leader: {}; {}",record.getString(LEADER_KEY), e );
       return Character.MIN_VALUE;
     }
   }

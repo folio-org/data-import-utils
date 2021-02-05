@@ -2,7 +2,7 @@ package org.folio.dataimport.util;
 
 import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
-import io.vertx.core.http.impl.headers.VertxHttpHeaders;
+import io.vertx.core.http.impl.headers.HeadersMultiMap;
 
 import java.util.Map;
 
@@ -22,7 +22,7 @@ public final class OkapiConnectionParams {
   @Deprecated
   private final Vertx vertx;
   private final Integer timeout;
-  private MultiMap headers = new VertxHttpHeaders();
+  private MultiMap headers = new HeadersMultiMap();
 
   public OkapiConnectionParams(Map<String, String> okapiHeaders, Vertx vertx, Integer timeout) {
     this.okapiUrl = okapiHeaders.getOrDefault(OKAPI_URL_HEADER, "localhost");

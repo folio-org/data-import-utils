@@ -1,8 +1,10 @@
 package org.folio.dataimport.util;
 
 import io.vertx.core.Future;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
+import io.vertx.core.Promise;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.folio.dataimport.util.exception.ConflictException;
 import org.folio.rest.tools.utils.ValidationHelper;
 
@@ -18,7 +20,7 @@ import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 public final class ExceptionHelper {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionHelper.class);
+  private static final Logger LOGGER = LogManager.getLogger();
 
   private ExceptionHelper() {
   }
@@ -42,10 +44,10 @@ public final class ExceptionHelper {
         .entity(throwable.getMessage())
         .build();
     }
-    Future<Response> validationFuture = Future.future();
-    ValidationHelper.handleError(throwable, validationFuture.completer());
-    if (validationFuture.isComplete()) {
-      Response response = validationFuture.result();
+    Promise<Response> validationFuture = Promise.promise();
+    ValidationHelper.handleError(throwable, validationFuture);
+    if (validationFuture.future().isComplete()) {
+      Response response = validationFuture.future().result();
       if (response.getStatus() == INTERNAL_SERVER_ERROR.getStatusCode()) {
         LOGGER.error(throwable.getMessage(), throwable);
       }

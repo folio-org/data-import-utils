@@ -1,6 +1,7 @@
 package org.folio.dataimport.util.test;
 
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
@@ -26,13 +27,13 @@ public class GenericHandlerAnswerTest {
       .targetMethod(ArgumentMatchers.any());
 
     // when
-    Future<JsonObject> future = Future.future();
-    stubObject.targetMethod(future);
+    Promise<JsonObject> promise = Promise.promise();
+    stubObject.targetMethod(promise);
 
     // then
-    future.setHandler(ar -> {
-      assertTrue(future.succeeded());
-      JsonObject actualResult = future.result();
+    promise.future().onComplete(ar -> {
+      assertTrue(promise.future().succeeded());
+      JsonObject actualResult = promise.future().result();
       assertEquals(expectedResult, actualResult);
     });
   }
