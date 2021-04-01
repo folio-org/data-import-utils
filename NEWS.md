@@ -1,4 +1,7 @@
-## 1.8.0-SNAPSHOT 2021-02-05
+## 1.8.1-SNAPSHOT 2021-02-05
+* [MODDATAIMP-403](https://issues.folio.org/browse/MODDATAIMP-403) Fixed record type determination by leader
+
+## 1.8.0 2021-02-05
 * [MODDATAIMP-365](https://issues.folio.org/browse/MODDATAIMP-365) Upgrade data-import-utils to RAML Module Builder 32.x
 
 ## 1.7.0 2021-01-12

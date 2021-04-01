@@ -18,14 +18,14 @@ public class MarcRecordAnalyzerTest {
 
   @Test
   public void process_Holding_OK() {
-    JsonObject record = new JsonObject("{\"leader\":\"13112uam a2200553Ii 4500\"}");
+    JsonObject record = new JsonObject("{\"leader\":\"13112cum a2200553Ii 4500\"}");
     MarcRecordType result = analyzer.process(record);
     assertEquals(MarcRecordType.HOLDING, result);
   }
 
   @Test
   public void process_Authority_OK() {
-    JsonObject record = new JsonObject("{\"leader\":\"13112zam a2200553Ii 4500\"}");
+    JsonObject record = new JsonObject("{\"leader\":\"13112czm a2200553Ii 4500\"}");
     MarcRecordType result = analyzer.process(record);
     assertEquals(MarcRecordType.AUTHORITY, result);
   }
