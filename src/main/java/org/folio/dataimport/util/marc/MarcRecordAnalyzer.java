@@ -14,7 +14,7 @@ import static java.util.Arrays.asList;
 public class MarcRecordAnalyzer implements RecordAnalyzer {
   private static final Logger LOGGER = LogManager.getLogger();
   private static final String LEADER_KEY = "leader";
-  private static final int RECORD_TYPE_INDEX = 5;
+  private static final int RECORD_TYPE_INDEX = 6;
   private static final Set<Character> BIB_CODES = new HashSet<>(asList('a', 'c', 'd', 'e', 'f', 'g', 'i', 'j', 'k', 'm', 'o', 'p', 'r', 't'));
   private static final Set<Character> HOLDING_CODES = new HashSet<>(asList('u', 'v', 'x', 'y'));
   private static final Set<Character> AUTHORITY_CODES = new HashSet<>(Collections.singletonList('z'));
