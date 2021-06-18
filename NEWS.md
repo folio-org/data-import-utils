@@ -1,4 +1,4 @@
-## 1.8.1-SNAPSHOT 2021-02-05
+## 1.9.0 2021-06-18
 * [MODDATAIMP-403](https://issues.folio.org/browse/MODDATAIMP-403) Fixed record type determination by leader
 
 ## 1.8.0 2021-02-05
