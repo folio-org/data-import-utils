@@ -12,13 +12,13 @@ import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.folio.rest.RestVerticle;
+import org.folio.util.PercentCodec;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +41,11 @@ public class ConfigurationUtilTest {
 
   private static final String TENANT_ID = "diku";
   private static final String TOKEN = "token";
+  private static final String CONFIGURATION_URI =
+      "/configurations/entries?query="
+          + PercentCodec.encodeAsString("module==DATA_IMPORT AND ( code==\"data.import.storage.type\")")
+          + "&offset=0&limit=3&";
+
   private OkapiConnectionParams params;
 
   @Rule
@@ -73,9 +78,7 @@ public class ConfigurationUtilTest {
   public void shouldReturnPropertyByCode(TestContext context) throws UnsupportedEncodingException {
     Async async = context.async();
 
-    WireMock.stubFor(WireMock.get("/configurations/entries?query="
-      + URLEncoder.encode("module==DATA_IMPORT AND ( code==\"data.import.storage.type\")", "UTF-8")
-      + "&offset=0&limit=3&").willReturn(WireMock.okJson(config.toString())));
+    WireMock.stubFor(WireMock.get(CONFIGURATION_URI).willReturn(WireMock.okJson(config.toString())));
 
     Future<String> future = ConfigurationUtil.getPropertyByCode(code, params);
     future.onComplete(stringAsyncResult -> {
@@ -89,9 +92,7 @@ public class ConfigurationUtilTest {
   public void shouldFailFutureIfErrorResponse(TestContext context) throws UnsupportedEncodingException {
     Async async = context.async();
 
-    WireMock.stubFor(WireMock.get("/configurations/entries?query="
-      + URLEncoder.encode("module==DATA_IMPORT AND ( code==\"data.import.storage.type\")", "UTF-8")
-      + "&offset=0&limit=3&").willReturn(WireMock.serverError()));
+    WireMock.stubFor(WireMock.get(CONFIGURATION_URI).willReturn(WireMock.serverError()));
 
     Future<String> future = ConfigurationUtil.getPropertyByCode(code, params);
     future.onComplete(stringAsyncResult -> {
@@ -105,9 +106,8 @@ public class ConfigurationUtilTest {
   public void shouldFailFutureIfNoConfigInResponse(TestContext context) throws UnsupportedEncodingException {
     Async async = context.async();
 
-    WireMock.stubFor(WireMock.get("/configurations/entries?query="
-      + URLEncoder.encode("module==DATA_IMPORT AND ( code==\"data.import.storage.type\")", "UTF-8")
-      + "&offset=0&limit=3&").willReturn(WireMock.okJson(new JsonObject().put("totalRecords", 0).toString())));
+    WireMock.stubFor(WireMock.get(CONFIGURATION_URI)
+        .willReturn(WireMock.okJson(new JsonObject().put("totalRecords", 0).toString())));
 
     Future<String> future = ConfigurationUtil.getPropertyByCode(code, params);
     future.onComplete(stringAsyncResult -> {
