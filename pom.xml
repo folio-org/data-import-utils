@@ -20,11 +20,10 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <vertx.version>4.0.0</vertx.version>
-    <mod-configuration-client.version>5.6.0</mod-configuration-client.version>
-    <raml-module-builder.version>32.1.0</raml-module-builder.version>
-    <junit.version>4.13</junit.version>
-    <powermock.version>1.7.1</powermock.version>
+    <vertx.version>4.2.6</vertx.version>
+    <mod-configuration-client.version>5.7.5</mod-configuration-client.version>
+    <raml-module-builder.version>33.2.7</raml-module-builder.version>
+    <junit.version>4.13.2</junit.version>
   </properties>
 
   <repositories>
@@ -47,6 +46,14 @@
       <version>${mod-configuration-client.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>4.4.0</version>
+      <!-- src/main/java/org/folio/dataimport/util/test/GenericHandlerAnswer.java -->
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-unit</artifactId>
       <version>${vertx.version}</version>
@@ -60,8 +67,8 @@
     </dependency>
     <dependency>
       <groupId>com.github.tomakehurst</groupId>
-      <artifactId>wiremock</artifactId>
-      <version>2.19.0</version>
+      <artifactId>wiremock-jre8</artifactId>
+      <version>2.32.0</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
