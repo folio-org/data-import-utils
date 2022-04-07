@@ -1,3 +1,6 @@
+## 1.10.0 2022-04-07
+* [MODDATAIMP-665](https://issues.folio.org/browse/MODDATAIMP-665) Update dependencies (RMB, Vertx, log4j, ...) (CVE-2021-44228)
+
 ## 1.9.0 2021-06-18
 * [MODDATAIMP-403](https://issues.folio.org/browse/MODDATAIMP-403) Fixed record type determination by leader
 
