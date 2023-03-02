@@ -1,3 +1,6 @@
+## 1.11.0 2023-03-02
+* [MODDATAIMP-785](https://issues.folio.org/browse/MODDATAIMP-785) Upgrade data-import-utils to RMB 35.0.6, Vert.x 4.3.8, config-client 5.9.1
+
 ## 1.10.0 2022-04-07
 * [MODDATAIMP-665](https://issues.folio.org/browse/MODDATAIMP-665) Update dependencies (RMB, Vertx, log4j, ...) (CVE-2021-44228)
 
