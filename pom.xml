@@ -20,9 +20,9 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <vertx.version>4.2.6</vertx.version>
-    <mod-configuration-client.version>5.7.5</mod-configuration-client.version>
-    <raml-module-builder.version>33.2.7</raml-module-builder.version>
+    <vertx.version>4.3.8</vertx.version>
+    <mod-configuration-client.version>5.9.1</mod-configuration-client.version>
+    <raml-module-builder.version>35.0.6</raml-module-builder.version>
     <junit.version>4.13.2</junit.version>
   </properties>
 
@@ -48,7 +48,7 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>4.4.0</version>
+      <version>5.1.1</version>
       <!-- src/main/java/org/folio/dataimport/util/test/GenericHandlerAnswer.java -->
       <scope>provided</scope>
     </dependency>
@@ -68,7 +68,7 @@
     <dependency>
       <groupId>com.github.tomakehurst</groupId>
       <artifactId>wiremock-jre8</artifactId>
-      <version>2.32.0</version>
+      <version>2.35.0</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -156,6 +156,34 @@
               <artifactSet />
               <outputFile>${project.build.directory}/${project.artifactId}-fat.jar</outputFile>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.5.0</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
