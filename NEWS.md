@@ -1,3 +1,6 @@
+## 1.12.0 2024-03-11
+* [MODDICORE-398](https://issues.folio.org/browse/MODDICORE-398) Upgrade data-import-utils to RMB 35.2.0, Vert.x 4.5.4
+
 ## 1.11.0 2023-03-02
 * [MODDATAIMP-785](https://issues.folio.org/browse/MODDATAIMP-785) Upgrade data-import-utils to RMB 35.0.6, Vert.x 4.3.8, config-client 5.9.1
 
