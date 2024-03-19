@@ -1,4 +1,4 @@
-## 1.12.0 2024-03-11
+## 1.12.1 2024-03-19
 * [MODDICORE-398](https://issues.folio.org/browse/MODDICORE-398) Upgrade data-import-utils to jdk 17, RMB 35.2.0, Vert.x 4.5.4
 
 ## 1.11.0 2023-03-02
