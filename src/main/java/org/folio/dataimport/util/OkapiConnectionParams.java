@@ -15,7 +15,7 @@ import static org.folio.dataimport.util.RestUtil.OKAPI_URL_HEADER;
  */
 public final class OkapiConnectionParams {
 
-  private static final int DEF_TIMEOUT = 2000;
+  private static final int DEF_TIMEOUT = 30000;
   private final String okapiUrl;
   private final String tenantId;
   private final String token;
