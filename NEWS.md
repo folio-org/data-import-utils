@@ -1,3 +1,6 @@
+## 1.13.0-SNAPSHOT 2024-XX-XX
+* [MODDATAIMP-1048](https://folio-org.atlassian.net/browse/MODDATAIMP-1048) Increase timeout default value for the requests in the data-import-utils module
+
 ## 1.12.1 2024-03-19
 * [MODDICORE-398](https://issues.folio.org/browse/MODDICORE-398) Upgrade data-import-utils to jdk 17, RMB 35.2.0, Vert.x 4.5.4
 
