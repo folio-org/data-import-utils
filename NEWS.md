@@ -1,4 +1,4 @@
-## 1.13.0-SNAPSHOT 2024-XX-XX
+## 1.13.0 2024-10-29
 * [MODDATAIMP-1048](https://folio-org.atlassian.net/browse/MODDATAIMP-1048) Increase timeout default value for the requests in the data-import-utils module
 
 ## 1.12.1 2024-03-19
