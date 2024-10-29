@@ -3,7 +3,7 @@
 
   <groupId>org.folio</groupId>
   <artifactId>data-import-utils</artifactId>
-  <version>1.13.0-SNAPSHOT</version>
+  <version>1.14.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>data-import-utils</name>
   <organization>
@@ -21,8 +21,8 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <vertx.version>4.5.4</vertx.version>
-    <mod-configuration-client.version>5.9.1</mod-configuration-client.version>
-    <raml-module-builder.version>35.2.0</raml-module-builder.version>
+    <mod-configuration-client.version>5.11.0</mod-configuration-client.version>
+    <raml-module-builder.version>35.3.0</raml-module-builder.version>
     <junit.version>4.13.2</junit.version>
   </properties>
 
