@@ -30,9 +30,12 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.folio.dataimport.util.RestUtil.OKAPI_TENANT_HEADER;
+import static org.folio.dataimport.util.RestUtil.OKAPI_TOKEN_HEADER;
 import static org.folio.dataimport.util.RestUtil.OKAPI_URL_HEADER;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(VertxUnitRunner.class)
@@ -140,6 +143,100 @@ public class RestUtilTest {
     assertFalse(RestUtil.validateAsyncResult(badRequestAsyncResult, promise));
     assertTrue(promise.future().failed());
     assertTrue(promise.future().cause() instanceof BadRequestException);
+  }
+
+  @Test
+  public void shouldRemoveTokenHeaderWhenSystemUserDisabled(TestContext context) {
+    Async async = context.async();
+
+    final var url = "http://localhost:" + mockServer.port();
+    final var tenant = "diku";
+    final var token = "token";
+
+    // Set the system property to disable system user
+    System.setProperty("SYSTEM_USER_ENABLED", "false");
+
+    Map<String, String> okapiHeaders = new HashMap<>();
+
+    okapiHeaders.put(OKAPI_URL_HEADER, url);
+    okapiHeaders.put(OKAPI_TENANT_HEADER, tenant);
+    okapiHeaders.put(OKAPI_TOKEN_HEADER, token);
+    var params = new OkapiConnectionParams(okapiHeaders, Vertx.vertx());
+
+    WireMock.stubFor(WireMock.get("/test-endpoint")
+      .willReturn(WireMock.ok()));
+
+    var future = RestUtil.doRequestWithSystemUser(
+      params, "/test-endpoint", HttpMethod.GET, null);
+
+    future.onComplete(response -> {
+      try {
+        assertTrue(response.succeeded());
+        assertNotNull(response.result());
+
+        // Verify that the token header was removed
+        var requests = WireMock.findAll(
+          WireMock.getRequestedFor(WireMock.urlEqualTo("/test-endpoint")));
+        assertEquals(1, requests.size());
+        var request = requests.get(0);
+
+        var tokenHeader = request.getHeader(OKAPI_TOKEN_HEADER);
+        assertNull("Token header should be removed when SYSTEM_USER_ENABLED is false", tokenHeader);
+
+        // Verify other headers
+        assertEquals(tenant, request.getHeader(OKAPI_TENANT_HEADER));
+        assertEquals(url, request.getHeader(OKAPI_URL_HEADER));
+
+        async.complete();
+      } catch (AssertionError e) {
+        context.fail(e);
+      } finally {
+        System.clearProperty("SYSTEM_USER_ENABLED");
+      }
+    });
+  }
+
+  @Test
+  public void shouldNotRemoveTokenHeaderWhenSystemUserPropertyMissing(TestContext context) {
+    Async async = context.async();
+
+    final var url = "http://localhost:" + mockServer.port();
+    final var tenant = "diku";
+    final var token = "token";
+
+    Map<String, String> okapiHeaders = new HashMap<>();
+
+    okapiHeaders.put(OKAPI_URL_HEADER, url);
+    okapiHeaders.put(OKAPI_TENANT_HEADER, tenant);
+    okapiHeaders.put(OKAPI_TOKEN_HEADER, token);
+    var params = new OkapiConnectionParams(okapiHeaders, Vertx.vertx());
+
+    WireMock.stubFor(WireMock.get("/test-endpoint")
+      .willReturn(WireMock.ok()));
+
+    var future = RestUtil.doRequestWithSystemUser(
+      params, "/test-endpoint", HttpMethod.GET, null);
+
+    future.onComplete(response -> {
+      try {
+        assertTrue(response.succeeded());
+        assertNotNull(response.result());
+
+        var requests = WireMock.findAll(
+          WireMock.getRequestedFor(WireMock.urlEqualTo("/test-endpoint")));
+        assertEquals(1, requests.size());
+        var request = requests.get(0);
+
+        // Verify headers
+        assertEquals(token, request.getHeader(OKAPI_TOKEN_HEADER));
+        assertEquals(tenant, request.getHeader(OKAPI_TENANT_HEADER));
+        assertEquals(url, request.getHeader(OKAPI_URL_HEADER));
+
+        async.complete();
+      } catch (AssertionError e) {
+        context.fail(e);
+      }
+    });
   }
 
   private AsyncResult<RestUtil.WrappedResponse> getAsyncResult(RestUtil.WrappedResponse result, Throwable cause, boolean succeeded, boolean failed) {
