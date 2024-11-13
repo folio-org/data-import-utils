@@ -121,7 +121,7 @@ public final class RestUtil {
    * <p>
    * Note: This functionality is specific to the Eureka environment.
    *
-   * @return {@code true} if the system user is enabled; otherwise {@code false}.
+   * @return {@code true} if the system user is set for Eureka env; otherwise {@code false}.
    */
   public static boolean isSystemUserEnabled() {
     return !Boolean.parseBoolean(System.getProperty("SYSTEM_USER_ENABLED", "true"));
