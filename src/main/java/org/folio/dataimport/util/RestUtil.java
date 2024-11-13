@@ -1,7 +1,7 @@
 package org.folio.dataimport.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -11,13 +11,10 @@ import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
-import io.vertx.core.http.HttpClientResponse;
 import io.vertx.core.http.HttpMethod;
-import io.vertx.ext.web.client.HttpRequest;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.HttpResponse;
 import io.vertx.ext.web.client.WebClient;
-import io.vertx.core.json.JsonObject;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.folio.HttpStatus;
@@ -25,8 +22,7 @@ import org.folio.HttpStatus;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
-
-import java.util.Map;
+import java.util.Optional;
 
 import static org.folio.HttpStatus.HTTP_CREATED;
 import static org.folio.HttpStatus.HTTP_INTERNAL_SERVER_ERROR;
@@ -84,38 +80,80 @@ public final class RestUtil {
   }
 
   /**
+   * Creates an HTTP request, removing the token header if system user is disabled.
+   *
+   * @param params  Okapi connection parameters.
+   * @param url     Relative URL for the HTTP request.
+   * @param method  HTTP method (GET, POST, etc.).
+   * @param payload Body of the request.
+   * @return A future representing the asynchronous HTTP response.
+   */
+
+  public static <T> Future<WrappedResponse> doRequestWithSystemUser(
+    OkapiConnectionParams params, String url, HttpMethod method, T payload) {
+    var headers = MultiMap.caseInsensitiveMultiMap().addAll(params.getHeaders());
+    if (isSystemUserEnabled()) {
+      headers.remove(OKAPI_TOKEN_HEADER);
+    }
+    return doRequest(url, method, params, headers, payload);
+  }
+
+  /**
    * Create http request
    *
-   * @param url     - url for http request
-   * @param method  - http method
-   * @param payload - body of request
-   * @return - async http response
+   * @param params  Okapi connection parameters.
+   * @param url     Relative URL for the HTTP request.
+   * @param method  HTTP method (GET, POST, etc.).
+   * @param payload Body of the request.
+   * @return A future representing the asynchronous HTTP response.
    */
-  public static <T> Future<WrappedResponse> doRequest(OkapiConnectionParams params, String url,
-                                                      HttpMethod method, T payload) {
+  public static <T> Future<WrappedResponse> doRequest(
+    OkapiConnectionParams params, String url, HttpMethod method, T payload) {
+    return doRequest(url, method, params, params.getHeaders(), payload);
+  }
+
+  /**
+   * Checks if the system user is enabled based on a system property.
+   * <p>
+   * This method reads the `SYSTEM_USER_ENABLED` system property and parses
+   * its value as a boolean. If the property is not found or cannot be parsed,
+   * it defaults to `true`. The method then negates the parsed value and returns it.
+   * <p>
+   * Note: This functionality is specific to the Eureka environment.
+   *
+   * @return {@code true} if the system user is set for Eureka env; otherwise {@code false}.
+   */
+  public static boolean isSystemUserEnabled() {
+    return !Boolean.parseBoolean(System.getProperty("SYSTEM_USER_ENABLED", "true"));
+  }
+
+  private static <T> Future<WrappedResponse> doRequest(
+    String url, HttpMethod method, OkapiConnectionParams params, MultiMap headers, T payload) {
     Promise<WrappedResponse> promise = Promise.promise();
+
     try {
-      MultiMap headers = params.getHeaders();
-      String requestUrl = params.getOkapiUrl() + url;
-      WebClient client = WebClient.wrap(getHttpClient(params));
-      HttpRequest<Buffer> request = client.requestAbs(method, requestUrl);
-      if (headers != null) {
-        headers.add("Content-type", "application/json")
+    var requestUrl = params.getOkapiUrl() + url;
+    var client = WebClient.wrap(getHttpClient(params));
+    var request = client.requestAbs(method, requestUrl);
+
+    Optional.ofNullable(headers)
+      .ifPresent(h -> {
+        h.add("Content-type", "application/json")
           .add("Accept", "application/json, text/plain");
-        for (Map.Entry entry : headers.entries()) {
-          request.putHeader((String) entry.getKey(), (String) entry.getValue());
-        }
-      }
+        h.entries()
+          .forEach(entry -> request.putHeader(entry.getKey(), entry.getValue()));
+      });
+
       if (method == HttpMethod.PUT || method == HttpMethod.POST) {
-        request.sendBuffer(Buffer.buffer(new ObjectMapper().writeValueAsString(payload)), handleResponse(promise));
+        var buffer = Buffer.buffer(new ObjectMapper().writeValueAsString(payload));
+        request.sendBuffer(buffer, handleResponse(promise));
       } else {
         request.send(handleResponse(promise));
       }
-      return promise.future();
     } catch (Exception e) {
       promise.fail(e);
-      return promise.future();
     }
+    return promise.future();
   }
 
   /**
