@@ -129,8 +129,9 @@ public final class RestUtil {
 
   private static <T> Future<WrappedResponse> doRequest(
     String url, HttpMethod method, OkapiConnectionParams params, MultiMap headers, T payload) {
-
     Promise<WrappedResponse> promise = Promise.promise();
+
+    try {
     var requestUrl = params.getOkapiUrl() + url;
     var client = WebClient.wrap(getHttpClient(params));
     var request = client.requestAbs(method, requestUrl);
@@ -143,14 +144,13 @@ public final class RestUtil {
           .forEach(entry -> request.putHeader(entry.getKey(), entry.getValue()));
       });
 
-    try {
       if (method == HttpMethod.PUT || method == HttpMethod.POST) {
         var buffer = Buffer.buffer(new ObjectMapper().writeValueAsString(payload));
         request.sendBuffer(buffer, handleResponse(promise));
       } else {
         request.send(handleResponse(promise));
       }
-    } catch (JsonProcessingException e) {
+    } catch (Exception e) {
       promise.fail(e);
     }
     return promise.future();
