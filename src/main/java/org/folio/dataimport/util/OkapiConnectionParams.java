@@ -4,6 +4,7 @@ import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.impl.headers.HeadersMultiMap;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.folio.dataimport.util.RestUtil.OKAPI_TENANT_HEADER;
@@ -28,7 +29,7 @@ public final class OkapiConnectionParams {
   public OkapiConnectionParams(Map<String, String> okapiHeaders, Vertx vertx, Integer timeout) {
     this.okapiUrl = okapiHeaders.getOrDefault(OKAPI_URL_HEADER, "localhost");
     this.tenantId = okapiHeaders.getOrDefault(OKAPI_TENANT_HEADER, "");
-    this.token = okapiHeaders.getOrDefault(OKAPI_TOKEN_HEADER, "dummy");
+    this.token = okapiHeaders.getOrDefault(OKAPI_TOKEN_HEADER, "");
     this.vertx = vertx;
     this.timeout = timeout != null ? timeout : DEF_TIMEOUT;
     this.headers.addAll(okapiHeaders);
@@ -47,7 +48,7 @@ public final class OkapiConnectionParams {
   }
 
   public String getToken() {
-    return isSystemUserEnabled() ? null : token;
+    return token;
   }
 
   @Deprecated
@@ -68,4 +69,13 @@ public final class OkapiConnectionParams {
   public void setHeaders(MultiMap headers) {
     this.headers = headers;
   }
+
+  public static OkapiConnectionParams createSystemUserConnectionParams(Map<String, String> okapiHeaders, Vertx vertx) {
+    var headers = new HashMap<>(okapiHeaders);
+    if (isSystemUserEnabled()) {
+      headers.remove(OKAPI_TOKEN_HEADER);
+    }
+    return new OkapiConnectionParams(headers, vertx);
+  }
+
 }
