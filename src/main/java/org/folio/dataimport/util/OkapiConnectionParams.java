@@ -9,6 +9,7 @@ import java.util.Map;
 import static org.folio.dataimport.util.RestUtil.OKAPI_TENANT_HEADER;
 import static org.folio.dataimport.util.RestUtil.OKAPI_TOKEN_HEADER;
 import static org.folio.dataimport.util.RestUtil.OKAPI_URL_HEADER;
+import static org.folio.dataimport.util.RestUtil.isSystemUserEnabled;
 
 /**
  * Wrapper class for Okapi connection params
@@ -46,7 +47,7 @@ public final class OkapiConnectionParams {
   }
 
   public String getToken() {
-    return token;
+    return isSystemUserEnabled() ? null : token;
   }
 
   @Deprecated

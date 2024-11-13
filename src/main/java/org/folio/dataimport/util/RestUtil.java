@@ -92,7 +92,7 @@ public final class RestUtil {
   public static <T> Future<WrappedResponse> doRequestWithSystemUser(
     OkapiConnectionParams params, String url, HttpMethod method, T payload) {
     var headers = MultiMap.caseInsensitiveMultiMap().addAll(params.getHeaders());
-    if (!isSystemUserEnabled()) {
+    if (isSystemUserEnabled()) {
       headers.remove(OKAPI_TOKEN_HEADER);
     }
     return doRequest(url, method, params, headers, payload);
@@ -110,6 +110,21 @@ public final class RestUtil {
   public static <T> Future<WrappedResponse> doRequest(
     OkapiConnectionParams params, String url, HttpMethod method, T payload) {
     return doRequest(url, method, params, params.getHeaders(), payload);
+  }
+
+  /**
+   * Checks if the system user is enabled based on a system property.
+   * <p>
+   * This method reads the `SYSTEM_USER_ENABLED` system property and parses
+   * its value as a boolean. If the property is not found or cannot be parsed,
+   * it defaults to `true`. The method then negates the parsed value and returns it.
+   * <p>
+   * Note: This functionality is specific to the Eureka environment.
+   *
+   * @return {@code true} if the system user is enabled; otherwise {@code false}.
+   */
+  public static boolean isSystemUserEnabled() {
+    return !Boolean.parseBoolean(System.getProperty("SYSTEM_USER_ENABLED", "true"));
   }
 
   private static <T> Future<WrappedResponse> doRequest(
@@ -139,10 +154,6 @@ public final class RestUtil {
       promise.fail(e);
     }
     return promise.future();
-  }
-
-  private static boolean isSystemUserEnabled() {
-    return Boolean.parseBoolean(System.getProperty("SYSTEM_USER_ENABLED", "true"));
   }
 
   /**
