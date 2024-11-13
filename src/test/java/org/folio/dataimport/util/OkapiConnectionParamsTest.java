@@ -30,7 +30,7 @@ public class OkapiConnectionParamsTest {
 
     assertEquals("http://localhost", params.getOkapiUrl());
     assertEquals("diku", params.getTenantId());
-    assertNull(params.getToken());
+    assertEquals(params.getToken(), "");
 
     System.clearProperty("SYSTEM_USER_ENABLED");
   }
