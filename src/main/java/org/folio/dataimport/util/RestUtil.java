@@ -93,6 +93,8 @@ public final class RestUtil {
     OkapiConnectionParams params, String url, HttpMethod method, T payload) {
     var headers = MultiMap.caseInsensitiveMultiMap().addAll(params.getHeaders());
     if (isSystemUserEnabled()) {
+      LOGGER.trace("doRequestWithSystemUser:: Do request without {} header for system user, url: {}, method: {}, tenant: {}",
+        OKAPI_TOKEN_HEADER, url, method, params.getTenantId());
       headers.remove(OKAPI_TOKEN_HEADER);
     }
     return doRequest(url, method, params, headers, payload);
