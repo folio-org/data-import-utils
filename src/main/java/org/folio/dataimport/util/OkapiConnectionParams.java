@@ -3,6 +3,8 @@ package org.folio.dataimport.util;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.impl.headers.HeadersMultiMap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +19,7 @@ import static org.folio.dataimport.util.RestUtil.isSystemUserEnabled;
  */
 public final class OkapiConnectionParams {
 
+  private static final Logger LOGGER = LogManager.getLogger();
   private static final int DEF_TIMEOUT = 30000;
   private final String okapiUrl;
   private final String tenantId;
@@ -73,6 +76,8 @@ public final class OkapiConnectionParams {
   public static OkapiConnectionParams createSystemUserConnectionParams(Map<String, String> okapiHeaders, Vertx vertx) {
     var headers = new HashMap<>(okapiHeaders);
     if (isSystemUserEnabled()) {
+      LOGGER.trace("createSystemUserConnectionParams:: Creating okapi connection params without token for system user, tenant: {}",
+        okapiHeaders.getOrDefault(OKAPI_TOKEN_HEADER, ""));
       headers.remove(OKAPI_TOKEN_HEADER);
     }
     return new OkapiConnectionParams(headers, vertx);
