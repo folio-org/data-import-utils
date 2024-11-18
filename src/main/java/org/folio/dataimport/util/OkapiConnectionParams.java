@@ -76,8 +76,8 @@ public final class OkapiConnectionParams {
   public static OkapiConnectionParams createSystemUserConnectionParams(Map<String, String> okapiHeaders, Vertx vertx) {
     var headers = new HashMap<>(okapiHeaders);
     if (isSystemUserEnabled()) {
-      LOGGER.trace("createSystemUserConnectionParams:: Creating okapi connection params without token for system user, tenant: {}",
-        okapiHeaders.getOrDefault(OKAPI_TOKEN_HEADER, ""));
+      var tenant = okapiHeaders.getOrDefault(OKAPI_TENANT_HEADER, "");
+      LOGGER.trace("createSystemUserConnectionParams:: Creating okapi connection params without token for system user, tenant: {}", tenant);
       headers.remove(OKAPI_TOKEN_HEADER);
     }
     return new OkapiConnectionParams(headers, vertx);
