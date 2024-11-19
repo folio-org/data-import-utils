@@ -145,7 +145,7 @@ public final class RestUtil {
         h.entries()
           .forEach(entry -> request.putHeader(entry.getKey(), entry.getValue()));
       });
-
+      LOGGER.debug("doRequest:: headers = {}", headers);
       if (method == HttpMethod.PUT || method == HttpMethod.POST) {
         var buffer = Buffer.buffer(new ObjectMapper().writeValueAsString(payload));
         request.sendBuffer(buffer, handleResponse(promise));
