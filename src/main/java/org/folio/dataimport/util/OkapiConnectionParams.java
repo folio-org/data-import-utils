@@ -79,7 +79,6 @@ public final class OkapiConnectionParams {
       var tenant = okapiHeaders.getOrDefault(OKAPI_TENANT_HEADER, "");
       LOGGER.trace("createSystemUserConnectionParams:: Creating okapi connection params without token for system user, tenant: {}", tenant);
       headers.remove(OKAPI_TOKEN_HEADER);
-      LOGGER.debug("createSystemUserConnectionParams:: headers: {}", headers);
     }
     return new OkapiConnectionParams(headers, vertx);
   }
