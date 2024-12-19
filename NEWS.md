@@ -1,4 +1,4 @@
-## 1.14.0 2024-12-19
+## 1.13.1 2024-12-19
 * [MODSOURCE-821](https://folio-org.atlassian.net/browse/MODSOURCE-821) Add support for making request by System User for Eureka env
 
 ## 1.13.0 2024-10-29
