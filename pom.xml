@@ -3,7 +3,7 @@
 
   <groupId>org.folio</groupId>
   <artifactId>data-import-utils</artifactId>
-  <version>1.13.0</version>
+  <version>1.13.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>data-import-utils</name>
   <organization>
