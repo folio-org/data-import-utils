@@ -21,7 +21,6 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <vertx.version>4.5.4</vertx.version>
-    <mod-configuration-client.version>5.11.0</mod-configuration-client.version>
     <raml-module-builder.version>35.3.0</raml-module-builder.version>
     <junit.version>4.13.2</junit.version>
   </properties>
@@ -39,11 +38,6 @@
       <groupId>org.folio</groupId>
       <artifactId>domain-models-runtime</artifactId>
       <version>${raml-module-builder.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.folio</groupId>
-      <artifactId>mod-configuration-client</artifactId>
-      <version>${mod-configuration-client.version}</version>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
