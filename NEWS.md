@@ -1,6 +1,7 @@
-## 1.XX.X 2024-XX-XX
+## 1.14.0-SNAPSHOT 2025-XX-XX
 * [MODSOURCE-821](https://folio-org.atlassian.net/browse/MODSOURCE-821) Add do request by System User for Eureka env
 * [MODDATAIMP-1125](https://folio-org.atlassian.net/browse/MODDATAIMP-1125) Remove dependency on mod-configuration
+* [MODDATAIMP-1175](https://folio-org.atlassian.net/browse/MODDATAIMP-1175) Update to Java 21 data-import-utils library Sunflower R1 2025
 
 ## 1.13.0 2024-10-29
 * [MODDATAIMP-1048](https://folio-org.atlassian.net/browse/MODDATAIMP-1048) Increase timeout default value for the requests in the data-import-utils module
