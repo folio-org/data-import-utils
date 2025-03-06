@@ -3,19 +3,24 @@ package org.folio.dataimport.util;
 import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.impl.headers.HeadersMultiMap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.folio.dataimport.util.RestUtil.OKAPI_TENANT_HEADER;
 import static org.folio.dataimport.util.RestUtil.OKAPI_TOKEN_HEADER;
 import static org.folio.dataimport.util.RestUtil.OKAPI_URL_HEADER;
+import static org.folio.dataimport.util.RestUtil.isSystemUserEnabled;
 
 /**
  * Wrapper class for Okapi connection params
  */
 public final class OkapiConnectionParams {
 
-  private static final int DEF_TIMEOUT = 2000;
+  private static final Logger LOGGER = LogManager.getLogger();
+  private static final int DEF_TIMEOUT = 30000;
   private final String okapiUrl;
   private final String tenantId;
   private final String token;
@@ -27,7 +32,7 @@ public final class OkapiConnectionParams {
   public OkapiConnectionParams(Map<String, String> okapiHeaders, Vertx vertx, Integer timeout) {
     this.okapiUrl = okapiHeaders.getOrDefault(OKAPI_URL_HEADER, "localhost");
     this.tenantId = okapiHeaders.getOrDefault(OKAPI_TENANT_HEADER, "");
-    this.token = okapiHeaders.getOrDefault(OKAPI_TOKEN_HEADER, "dummy");
+    this.token = okapiHeaders.getOrDefault(OKAPI_TOKEN_HEADER, "");
     this.vertx = vertx;
     this.timeout = timeout != null ? timeout : DEF_TIMEOUT;
     this.headers.addAll(okapiHeaders);
@@ -67,4 +72,15 @@ public final class OkapiConnectionParams {
   public void setHeaders(MultiMap headers) {
     this.headers = headers;
   }
+
+  public static OkapiConnectionParams createSystemUserConnectionParams(Map<String, String> okapiHeaders, Vertx vertx) {
+    var headers = new HashMap<>(okapiHeaders);
+    if (isSystemUserEnabled()) {
+      var tenant = okapiHeaders.getOrDefault(OKAPI_TENANT_HEADER, "");
+      LOGGER.trace("createSystemUserConnectionParams:: Creating okapi connection params without token for system user, tenant: {}", tenant);
+      headers.remove(OKAPI_TOKEN_HEADER);
+    }
+    return new OkapiConnectionParams(headers, vertx);
+  }
+
 }
