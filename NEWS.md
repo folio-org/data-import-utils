@@ -1,5 +1,4 @@
-## 1.14.0-SNAPSHOT 2025-XX-XX
-* [MODSOURCE-821](https://folio-org.atlassian.net/browse/MODSOURCE-821) Add do request by System User for Eureka env
+## 1.14.0 2025-03-07
 * [MODDATAIMP-1125](https://folio-org.atlassian.net/browse/MODDATAIMP-1125) Remove dependency on mod-configuration
 * [MODDATAIMP-1175](https://folio-org.atlassian.net/browse/MODDATAIMP-1175) Update to Java 21 data-import-utils library Sunflower R1 2025
 
