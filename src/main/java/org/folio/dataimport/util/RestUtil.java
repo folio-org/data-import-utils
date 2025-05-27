@@ -1,6 +1,5 @@
 package org.folio.dataimport.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
@@ -126,7 +125,8 @@ public final class RestUtil {
    * @return {@code true} if the system user is set for Eureka env; otherwise {@code false}.
    */
   public static boolean isSystemUserEnabled() {
-    return !Boolean.parseBoolean(System.getProperty("SYSTEM_USER_ENABLED", "true"));
+    return !Boolean.parseBoolean(System.getenv().getOrDefault("SYSTEM_USER_ENABLED",
+      System.getProperty("SYSTEM_USER_ENABLED", "true")));
   }
 
   private static <T> Future<WrappedResponse> doRequest(
