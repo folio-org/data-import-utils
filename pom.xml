@@ -20,8 +20,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <vertx.version>4.5.4</vertx.version>
-    <raml-module-builder.version>35.4.0</raml-module-builder.version>
+    <vertx.version>5.0.5</vertx.version>
+    <raml-module-builder.version>36.0.0-SNAPSHOT</raml-module-builder.version>
     <junit.version>4.13.2</junit.version>
   </properties>
 
@@ -96,7 +96,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.4.1</version>
+        <version>3.6.2</version>
         <executions>
           <execution>
             <id>enforce-maven</id>
@@ -116,7 +116,7 @@
 
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.11.0</version>
+        <version>3.14.1</version>
         <configuration>
           <release>21</release>
           <encoding>UTF-8</encoding>
@@ -127,7 +127,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.2.5</version>
+        <version>3.5.4</version>
         <configuration>
           <useSystemClassLoader>false</useSystemClassLoader>
         </configuration>
@@ -136,7 +136,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>3.5.2</version>
+        <version>3.6.1</version>
         <configuration>
           <filters>
             <filter>
@@ -163,7 +163,7 @@
 
       <plugin>
         <artifactId>maven-source-plugin</artifactId>
-        <version>3.3.0</version>
+        <version>3.3.1</version>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -177,7 +177,7 @@
 
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.5.0</version>
+        <version>3.12.0</version>
         <executions>
           <execution>
             <id>attach-javadocs</id>

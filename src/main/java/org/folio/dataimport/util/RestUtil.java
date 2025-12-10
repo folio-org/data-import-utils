@@ -148,9 +148,9 @@ public final class RestUtil {
 
       if (method == HttpMethod.PUT || method == HttpMethod.POST) {
         var buffer = Buffer.buffer(new ObjectMapper().writeValueAsString(payload));
-        request.sendBuffer(buffer, handleResponse(promise));
+        request.sendBuffer(buffer).onComplete(handleResponse(promise));
       } else {
-        request.send(handleResponse(promise));
+        request.send().onComplete(handleResponse(promise));
       }
     } catch (Exception e) {
       promise.fail(e);
@@ -178,10 +178,10 @@ public final class RestUtil {
    * @param promise     - future of callback
    * @return - boolean value is response ok
    */
-  public static boolean validateAsyncResult(AsyncResult<WrappedResponse> asyncResult, Promise promise) {
+  public static boolean validateAsyncResult(AsyncResult<WrappedResponse> asyncResult, Promise<?> promise) {
     boolean result = false;
     if (asyncResult.failed()) {
-      LOGGER.error("Error during HTTP request: {}", asyncResult.cause());
+      LOGGER.error("Error during HTTP request: ", asyncResult.cause());
       promise.fail(asyncResult.cause());
     } else if (asyncResult.result() == null) {
       LOGGER.error("Error during get response");

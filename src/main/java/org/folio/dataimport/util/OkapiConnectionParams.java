@@ -27,7 +27,7 @@ public final class OkapiConnectionParams {
   @Deprecated
   private final Vertx vertx;
   private final Integer timeout;
-  private MultiMap headers = new HeadersMultiMap();
+  private MultiMap headers = HeadersMultiMap.caseInsensitive();
 
   public OkapiConnectionParams(Map<String, String> okapiHeaders, Vertx vertx, Integer timeout) {
     this.okapiUrl = okapiHeaders.getOrDefault(OKAPI_URL_HEADER, "localhost");

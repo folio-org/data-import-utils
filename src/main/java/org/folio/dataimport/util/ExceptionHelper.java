@@ -1,6 +1,5 @@
 package org.folio.dataimport.util;
 
-import io.vertx.core.Future;
 import io.vertx.core.Promise;
 
 import org.apache.logging.log4j.LogManager;
@@ -45,7 +44,7 @@ public final class ExceptionHelper {
         .build();
     }
     Promise<Response> validationFuture = Promise.promise();
-    ValidationHelper.handleError(throwable, validationFuture);
+    ValidationHelper.handleError(throwable, validationFuture::handle);
     if (validationFuture.future().isComplete()) {
       Response response = validationFuture.future().result();
       if (response.getStatus() == INTERNAL_SERVER_ERROR.getStatusCode()) {
