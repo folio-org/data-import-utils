@@ -21,14 +21,14 @@ public class GenericHandlerAnswerTest {
   public void shouldReturnFutureWithExpectedResult() {
     // given
     JsonObject expectedResult = new JsonObject();
-    Future expectedFuture = Future.succeededFuture(expectedResult);
+    Future<JsonObject> expectedFuture = Future.succeededFuture(expectedResult);
     Mockito.doAnswer(new GenericHandlerAnswer<>(expectedFuture, 0))
       .when(stubObject)
       .targetMethod(ArgumentMatchers.any());
 
     // when
     Promise<JsonObject> promise = Promise.promise();
-    stubObject.targetMethod(promise);
+    stubObject.targetMethod(promise::handle);
 
     // then
     promise.future().onComplete(ar -> {
