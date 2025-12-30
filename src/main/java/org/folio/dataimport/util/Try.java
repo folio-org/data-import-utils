@@ -6,7 +6,7 @@ import io.vertx.core.Promise;
 import java.util.function.Supplier;
 
 /**
- * Util class which contains methods with boiler-plate code for exceptions handling under async methods calls.
+ * Util class which contains methods with boilerplate code for exceptions handling under async methods calls.
  */
 public class Try {
 

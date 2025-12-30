@@ -1,3 +1,7 @@
+## 2.0.0-SNAPSHOT 2026-mm-dd
+* [MODDATAIMP-1208](https://issues.folio.org/browse/MODDATAIMP-1208) Change SYSTEM_USER_ENABLED configuration reading
+* [MODDATAIMP-1248](https://issues.folio.org/browse/MODDATAIMP-1248) Upgrade data-import-utils to Vert.x 5.0
+
 ## 1.14.0 2025-03-07
 * [MODDATAIMP-1125](https://folio-org.atlassian.net/browse/MODDATAIMP-1125) Remove dependency on mod-configuration
 * [MODDATAIMP-1175](https://folio-org.atlassian.net/browse/MODDATAIMP-1175) Update to Java 21 data-import-utils library Sunflower R1 2025
