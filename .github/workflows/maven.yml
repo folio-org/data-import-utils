@@ -16,3 +16,5 @@ jobs:
     secrets: inherit
     with:
       java-version: '21'
+      do-docker: false
+      publish-module-descriptor: false
