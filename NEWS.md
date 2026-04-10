@@ -1,4 +1,4 @@
-## 2.0.0-SNAPSHOT 2026-mm-dd
+## 2.0.0 2026-04-10
 * [MODDATAIMP-1208](https://issues.folio.org/browse/MODDATAIMP-1208) Change SYSTEM_USER_ENABLED configuration reading
 * [MODDATAIMP-1248](https://issues.folio.org/browse/MODDATAIMP-1248) Upgrade data-import-utils to Vert.x 5.0
 
