@@ -2,13 +2,12 @@ package org.folio.dataimport.util;
 
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
-
 import java.util.function.Supplier;
 
 /**
  * Util class which contains methods with boilerplate code for exceptions handling under async methods calls.
  */
-public class Try {
+public final class Try {
 
   private Try() {
   }
@@ -56,12 +55,11 @@ public class Try {
   public interface Job<T> {
 
     /**
-     * Performs this operation on the given argument, or throws an exception if unable to do so
+     * Performs this operation on the given argument, or throws an exception if unable to do so.
      *
      * @param t the job argument
-     * @throws Exception
+     * @throws Exception throw exception if unable to do so
      */
-    void accept(T t) throws Exception;//NOSONAR
+    void accept(T t) throws Exception; //NOSONAR
   }
-
 }

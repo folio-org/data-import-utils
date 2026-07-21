@@ -1,21 +1,20 @@
 package org.folio.dataimport.util;
 
-import io.vertx.core.Promise;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.folio.dataimport.util.exception.ConflictException;
-import org.folio.rest.tools.utils.ValidationHelper;
-
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.CONFLICT;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+
+import io.vertx.core.Promise;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.folio.dataimport.util.exception.ConflictException;
+import org.folio.rest.tools.utils.ValidationHelper;
 
 public final class ExceptionHelper {
 
@@ -25,24 +24,27 @@ public final class ExceptionHelper {
   }
 
   public static Response mapExceptionToResponse(Throwable throwable) {
+    Response knownExceptionResponse = mapKnownException(throwable);
+    if (knownExceptionResponse != null) {
+      return knownExceptionResponse;
+    }
+    return mapValidationOrInternalError(throwable);
+  }
+
+  private static Response mapKnownException(Throwable throwable) {
     if (throwable instanceof BadRequestException) {
-      return Response.status(BAD_REQUEST.getStatusCode())
-        .type(MediaType.TEXT_PLAIN)
-        .entity(throwable.getMessage())
-        .build();
+      return buildPlainTextResponse(BAD_REQUEST, throwable.getMessage());
     }
     if (throwable instanceof NotFoundException) {
-      return Response.status(NOT_FOUND.getStatusCode())
-        .type(MediaType.TEXT_PLAIN)
-        .entity(throwable.getMessage())
-        .build();
+      return buildPlainTextResponse(NOT_FOUND, throwable.getMessage());
     }
     if (throwable instanceof ConflictException) {
-      return Response.status(CONFLICT.getStatusCode())
-        .type(MediaType.TEXT_PLAIN)
-        .entity(throwable.getMessage())
-        .build();
+      return buildPlainTextResponse(CONFLICT, throwable.getMessage());
     }
+    return null;
+  }
+
+  private static Response mapValidationOrInternalError(Throwable throwable) {
     Promise<Response> validationFuture = Promise.promise();
     ValidationHelper.handleError(throwable, validationFuture::handle);
     if (validationFuture.future().isComplete()) {
@@ -53,9 +55,13 @@ public final class ExceptionHelper {
       return response;
     }
     LOGGER.error(throwable.getMessage(), throwable);
-    return Response.status(INTERNAL_SERVER_ERROR.getStatusCode())
+    return buildPlainTextResponse(INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR.getReasonPhrase());
+  }
+
+  private static Response buildPlainTextResponse(Status status, String message) {
+    return Response.status(status.getStatusCode())
       .type(MediaType.TEXT_PLAIN)
-      .entity(INTERNAL_SERVER_ERROR.getReasonPhrase())
+      .entity(message)
       .build();
   }
 }
