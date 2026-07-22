@@ -13,13 +13,14 @@ public final class DaoUtil {
   }
 
   /**
-   * Build CQL from request URL query
+   * Build CQL from request URL query.
    *
    * @param query - query from URL
    * @param limit - limit of results for pagination
    * @return - CQL wrapper for building postgres request to database
    * @throws FieldException field exception
    */
+  @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
   public static CQLWrapper getCQLWrapper(String tableName, String query, int limit, int offset) throws FieldException {
     return getCQLWrapper(tableName, query)
       .setLimit(new Limit(limit))
@@ -27,19 +28,20 @@ public final class DaoUtil {
   }
 
   /**
-   * Build CQL from request URL query
+   * Build CQL from request URL query.
    *
    * @param query - query from URL
    * @return - CQL wrapper for building postgres request to database
    * @throws FieldException field exception
    */
+  @SuppressWarnings("checkstyle:AbbreviationAsWordInName")
   public static CQLWrapper getCQLWrapper(String tableName, String query) throws FieldException {
     CQL2PgJSON cql2pgJson = new CQL2PgJSON(tableName + ".jsonb");
     return new CQLWrapper(cql2pgJson, query);
   }
 
   /**
-   * Builds criteria by which db result is filtered
+   * Builds criteria by which db result is filtered.
    *
    * @param jsonbField - json key name
    * @param value      - value corresponding to the key

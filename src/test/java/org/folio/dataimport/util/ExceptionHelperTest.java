@@ -1,23 +1,21 @@
 package org.folio.dataimport.util;
 
-import org.folio.dataimport.util.exception.ConflictException;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import org.folio.dataimport.util.exception.ConflictException;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-public class ExceptionHelperTest {
+class ExceptionHelperTest {
 
   @Test
-  public void shouldReturnBadRequestResponse() {
-    Response response = ExceptionHelper.mapExceptionToResponse(new BadRequestException("Bad request message"));
+  void shouldReturnBadRequestResponse() {
+    var response = ExceptionHelper.mapExceptionToResponse(new BadRequestException("Bad request message"));
     assertNotNull(response);
     assertEquals(400, response.getStatus());
     assertEquals(MediaType.TEXT_PLAIN, response.getMediaType().toString());
@@ -25,8 +23,8 @@ public class ExceptionHelperTest {
   }
 
   @Test
-  public void shouldReturnNotFoundResponse() {
-    Response response = ExceptionHelper.mapExceptionToResponse(new NotFoundException("Not found message"));
+  void shouldReturnNotFoundResponse() {
+    var response = ExceptionHelper.mapExceptionToResponse(new NotFoundException("Not found message"));
     assertNotNull(response);
     assertEquals(404, response.getStatus());
     assertEquals(MediaType.TEXT_PLAIN, response.getMediaType().toString());
@@ -34,8 +32,8 @@ public class ExceptionHelperTest {
   }
 
   @Test
-  public void shouldReturnConflictResponse() {
-    Response response = ExceptionHelper.mapExceptionToResponse(new ConflictException("Conflict message"));
+  void shouldReturnConflictResponse() {
+    var response = ExceptionHelper.mapExceptionToResponse(new ConflictException("Conflict message"));
     assertNotNull(response);
     assertEquals(409, response.getStatus());
     assertEquals(MediaType.TEXT_PLAIN, response.getMediaType().toString());
@@ -43,12 +41,11 @@ public class ExceptionHelperTest {
   }
 
   @Test
-  public void shouldReturnInternalServerErrorResponse() {
-    Response response = ExceptionHelper.mapExceptionToResponse(new InternalServerErrorException("Internal server error message"));
+  void shouldReturnInternalServerErrorResponse() {
+    var response = ExceptionHelper.mapExceptionToResponse(new InternalServerErrorException("Internal server error"));
     assertNotNull(response);
     assertEquals(500, response.getStatus());
     assertEquals(MediaType.TEXT_PLAIN, response.getMediaType().toString());
     assertTrue(response.getEntity().toString().contains("Internal Server Error"));
   }
-
 }

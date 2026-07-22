@@ -1,3 +1,32 @@
+## 3.0.0 In Progress
+### Breaking changes
+* Renamed `OkapiConnectionParams` to `ConnectionParams` with removal of deprecated methods
+* Removed the `GenericHandlerAnswer` test utility and `StubObject` along with the `mockito-core` and `byte-buddy` dependencies
+
+### Features
+* Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
+
+### Bug fixes
+* Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
+
+### Tech Dept
+* Migrated tests from JUnit 4 to JUnit 5/6 (Jupiter)
+* Enforced Checkstyle rules (`folio-java-checkstyle`) across the codebase and fixed resulting violations
+* Added case-insensitive header handling test coverage for `RestUtil` and `ConnectionParams`
+
+### Dependencies
+* Bump `vertx` from `5.0.6` to `5.1.5`
+* Bump `junit` from JUnit `4.13.2` to JUnit Jupiter `6.1.2`
+* Bump `com.github.tomakehurst:wiremock-jre8` to `3.0.1`
+* Bump `maven-compiler-plugin` to `3.15.0`
+* Bump `maven-surefire-plugin` to `3.5.6`
+* Bump `maven-source-plugin` to `3.4.0`
+* Bump `maven-javadoc-plugin` to `3.12.0`
+* Bump `maven-release-plugin` to `3.3.1`
+* Bump `maven-enforcer-plugin` to `3.6.3`
+* Add `maven-checkstyle-plugin 3.6.0` with `folio-java-checkstyle 1.2.0` and `checkstyle 13.7.0`
+* Remove `mockito-core`, `net.bytebuddy:byte-buddy` and `maven-shade-plugin`
+
 ## 2.0.0 2026-04-10
 * [MODDATAIMP-1208](https://issues.folio.org/browse/MODDATAIMP-1208) Change SYSTEM_USER_ENABLED configuration reading
 * [MODDATAIMP-1248](https://issues.folio.org/browse/MODDATAIMP-1248) Upgrade data-import-utils to Vert.x 5.0
