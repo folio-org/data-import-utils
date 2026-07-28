@@ -30,7 +30,7 @@ class ConnectionParamsTest {
 
     assertEquals(TEST_URL, params.getConnectionUrl());
     assertEquals(TEST_TENANT, params.getTenantId());
-    assertNull(params.getToken());
+    assertEquals("", params.getToken());
 
     clearSystemUserProperty();
   }
@@ -101,7 +101,7 @@ class ConnectionParamsTest {
 
     assertEquals(TEST_URL, params.getConnectionUrl());
     assertEquals(TEST_TENANT, params.getTenantId());
-    assertNull(params.getToken());
+    assertEquals("", params.getToken());
     assertNull(params.getHeaders().get(TOKEN.toUpperCase()));
 
     clearSystemUserProperty();
