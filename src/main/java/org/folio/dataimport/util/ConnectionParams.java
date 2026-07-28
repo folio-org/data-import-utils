@@ -26,7 +26,7 @@ public final class ConnectionParams {
     this.headers.putAll(headers);
     this.connectionUrl = this.headers.get(XOkapiHeaders.URL);
     this.tenantId = this.headers.get(XOkapiHeaders.TENANT);
-    this.token = this.headers.get(XOkapiHeaders.TOKEN);
+    this.token = this.headers.getOrDefault(XOkapiHeaders.TOKEN, "");
     this.timeout = timeout != null ? timeout : DEF_TIMEOUT;
   }
 
