@@ -1,15 +1,20 @@
 ## 3.0.0 In Progress
 ### Breaking changes
+* Renamed the production artifact id from `data-import-utils` to `data-import-support`; consumers must update their dependency coordinates to `org.folio:data-import-support`
 * Renamed `OkapiConnectionParams` to `ConnectionParams` with removal of deprecated methods
 * Removed the `GenericHandlerAnswer` test utility and `StubObject` along with the `mockito-core` and `byte-buddy` dependencies
 
 ### Features
-* Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
+#### Test support
+* Added the `data-import-test-support` module with shared integration-test infrastructure: PostgreSQL and Kafka Testcontainer bootstrap, JUnit 5 extensions (`PostgresExtension`, `KafkaExtension`), an abstract raml-module-builder integration-test base class (`BaseIntegrationTest`), a Kafka producer/consumer harness, and tenant-enabling helpers including Enhanced Consortia Support (ECS)
+* Added a shared WireMock server and RestAssured `spec`/`given()`/`postEntity()`/`putEntity()`/`getEntity()`/`deleteEntity()` helpers to `BaseIntegrationTest` for stubbing calls to other modules and exercising the deployed module's API
+* Added `postRequest()`/`putRequest()`/`getRequest()`/`deleteRequest()` helpers (with query-parameter overloads) to `BaseIntegrationTest` that return a RestAssured `ValidatableResponse` for custom status/body assertions
 
 ### Bug fixes
 * Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
 
 ### Tech Dept
+* Restructured the repository into a multi-module Maven project: the root is now an aggregator/parent POM (`data-import-utils-parent`) and the production code moved to the new `data-import-support` module
 * Migrated tests from JUnit 4 to JUnit 5/6 (Jupiter)
 * Enforced Checkstyle rules (`folio-java-checkstyle`) across the codebase and fixed resulting violations
 * Added case-insensitive header handling test coverage for `RestUtil` and `ConnectionParams`
