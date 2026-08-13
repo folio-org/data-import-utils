@@ -45,7 +45,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
  * header to the WireMock server, so other modules called by the module under test can be stubbed.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public abstract class BaseIntegrationTest {
+public abstract class BaseRestTest {
 
   @RegisterExtension
   protected static final PostgresExtension POSTGRES = new PostgresExtension();

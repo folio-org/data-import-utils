@@ -7,11 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class BaseIntegrationTestDefaultsTest {
+class BaseRestTestDefaultsTest {
 
   @Test
   void shouldExposeSensibleTenantDefaults() {
-    var base = new BaseIntegrationTest() {
+    var base = new BaseRestTest() {
       @Override
       protected String getModuleName() {
         return "mod-test-1.0.0";
@@ -27,7 +27,7 @@ class BaseIntegrationTestDefaultsTest {
   @Test
   void shouldReturnEmptyMap_whenGetExtraSpecHeadersCalledByDefault() {
     // arrange
-    var base = new BaseIntegrationTest() {
+    var base = new BaseRestTest() {
       @Override
       protected String getModuleName() {
         return "mod-test-1.0.0";

@@ -5,7 +5,6 @@ import org.folio.rest.persist.PostgresClient;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
-import org.junit.jupiter.api.extension.ExtensionContext.Store.CloseableResource;
 
 /**
  * JUnit 5 extension that boots a single shared PostgreSQL Testcontainer for the whole test run.
@@ -65,7 +64,7 @@ public class PostgresExtension implements BeforeAllCallback {
     return PostgresTestSupport.getClient(vertx, tenantId);
   }
 
-  private static final class PostgresResource implements CloseableResource {
+  private static final class PostgresResource implements AutoCloseable {
 
     PostgresResource(String dockerImageName) {
       if (dockerImageName == null) {

@@ -20,7 +20,7 @@ centralises shared dependency and plugin management for the submodules:
 * **[data-import-test-support](data-import-test-support)** — shared integration-test
   infrastructure: PostgreSQL and Kafka Testcontainer bootstrap, a Kafka producer/consumer
   harness, JUnit 5 extensions (`PostgresExtension`, `KafkaExtension`), an abstract
-  raml-module-builder integration-test base class (`BaseIntegrationTest`), and
+  raml-module-builder integration-test base class (`BaseRestTest`), and
   tenant-enabling helpers (including Enhanced Consortia Support). Published as
   `org.folio:data-import-test-support` and intended to be consumed with `test` scope.
 
@@ -51,7 +51,7 @@ The underlying helpers (`PostgresTestSupport`, `KafkaTestSupport`, `TenantTestSu
 `EcsTenantSupport`, `FolioHeaders`) can also be used directly for tests that do not use the
 extensions.
 
-For a full raml-module-builder integration test, extend `BaseIntegrationTest`: it starts the
+For a full raml-module-builder integration test, extend `BaseRestTest`: it starts the
 shared PostgreSQL and Kafka containers, deploys the standard raml-module-builder `RestVerticle` on
 a random free port, runs the Tenant API before the tests, and starts a per-class WireMock server
 used to stub calls the module under test makes to other modules. Subclasses only supply the
@@ -79,7 +79,7 @@ class MyModuleIT extends AbstractRestVerticleTest {
 }
 ```
 
-`BaseIntegrationTest` exposes:
+`BaseRestTest` exposes:
 
 * `mockServerUrl()` / `stubGetJson(urlPattern, jsonResponseBody)` — the base URL of the shared
   WireMock server, and a shortcut to stub a `GET` request with a JSON response. The module under

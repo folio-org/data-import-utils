@@ -5,7 +5,6 @@ import org.folio.kafka.KafkaConfig;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ExtensionContext.Namespace;
-import org.junit.jupiter.api.extension.ExtensionContext.Store.CloseableResource;
 
 /**
  * JUnit 5 extension that boots a single shared Kafka Testcontainer for the whole test run.
@@ -78,7 +77,7 @@ public class KafkaExtension implements BeforeAllCallback {
     return getSupport().kafkaConfig(envId);
   }
 
-  private static final class KafkaResource implements CloseableResource {
+  private static final class KafkaResource implements AutoCloseable {
 
     private final KafkaTestSupport support;
 

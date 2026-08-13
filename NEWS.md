@@ -6,9 +6,9 @@
 
 ### Features
 #### Test support
-* Added the `data-import-test-support` module with shared integration-test infrastructure: PostgreSQL and Kafka Testcontainer bootstrap, JUnit 5 extensions (`PostgresExtension`, `KafkaExtension`), an abstract raml-module-builder integration-test base class (`BaseIntegrationTest`), a Kafka producer/consumer harness, and tenant-enabling helpers including Enhanced Consortia Support (ECS)
-* Added a shared WireMock server and RestAssured `spec`/`given()`/`postEntity()`/`putEntity()`/`getEntity()`/`deleteEntity()` helpers to `BaseIntegrationTest` for stubbing calls to other modules and exercising the deployed module's API
-* Added `postRequest()`/`putRequest()`/`getRequest()`/`deleteRequest()` helpers (with query-parameter overloads) to `BaseIntegrationTest` that return a RestAssured `ValidatableResponse` for custom status/body assertions
+* Added the `data-import-test-support` module with shared integration-test infrastructure: PostgreSQL and Kafka Testcontainer bootstrap, JUnit 5 extensions (`PostgresExtension`, `KafkaExtension`), an abstract raml-module-builder integration-test base class (`BaseRestTest`), a Kafka producer/consumer harness, and tenant-enabling helpers including Enhanced Consortia Support (ECS)
+* Added a shared WireMock server and RestAssured `spec`/`given()`/`postEntity()`/`putEntity()`/`getEntity()`/`deleteEntity()` helpers to `BaseRestTest` for stubbing calls to other modules and exercising the deployed module's API
+* Added `postRequest()`/`putRequest()`/`getRequest()`/`deleteRequest()` helpers (with query-parameter overloads) to `BaseRestTest` that return a RestAssured `ValidatableResponse` for custom status/body assertions
 
 ### Bug fixes
 * Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
