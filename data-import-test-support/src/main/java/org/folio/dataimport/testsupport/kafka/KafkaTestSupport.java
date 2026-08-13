@@ -1,5 +1,6 @@
 package org.folio.dataimport.testsupport.kafka;
 
+import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.folio.kafka.KafkaConfig;
@@ -14,13 +15,14 @@ import org.testcontainers.kafka.KafkaContainer;
  * {@link KafkaConfig} instances and topic names for use with {@link KafkaTestProducer} and
  * {@link KafkaTestConsumer}.
  */
-public final class KafkaTestSupport {
+public final class KafkaTestSupport implements AutoCloseable {
 
   public static final String KAFKA_HOST_PROPERTY = "KAFKA_HOST";
   public static final String KAFKA_PORT_PROPERTY = "KAFKA_PORT";
   public static final String DEFAULT_IMAGE = "apache/kafka-native:4.2.0";
 
   private static final Logger LOGGER = LogManager.getLogger();
+  private static final Pattern URL_SCHEME_REPLACEMENT_PATTERN = Pattern.compile("^\\w+://");
 
   private final KafkaContainer container;
 
@@ -28,6 +30,7 @@ public final class KafkaTestSupport {
     this(DEFAULT_IMAGE);
   }
 
+  @SuppressWarnings("java:S2095")
   public KafkaTestSupport(String dockerImage) {
     this.container = new KafkaContainer(dockerImage).withStartupAttempts(3);
   }
@@ -62,7 +65,12 @@ public final class KafkaTestSupport {
     LOGGER.info("stop:: Stopping shared Kafka test container");
     System.clearProperty(KAFKA_HOST_PROPERTY);
     System.clearProperty(KAFKA_PORT_PROPERTY);
-    container.stop();
+    container.close();
+  }
+
+  @Override
+  public void close() {
+    stop();
   }
 
   /**
@@ -71,7 +79,7 @@ public final class KafkaTestSupport {
    * @return the bootstrap servers connection string
    */
   public String getBootstrapServers() {
-    return container.getBootstrapServers().replaceFirst("^\\w+://", "");
+    return URL_SCHEME_REPLACEMENT_PATTERN.matcher(container.getBootstrapServers()).replaceFirst("");
   }
 
   public String getHost() {
