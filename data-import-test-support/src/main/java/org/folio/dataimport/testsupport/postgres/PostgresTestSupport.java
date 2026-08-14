@@ -1,9 +1,11 @@
 package org.folio.dataimport.testsupport.postgres;
 
+import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.folio.postgres.testing.PostgresTesterContainer;
+import org.folio.rest.persist.Criteria.Criterion;
 import org.folio.rest.persist.PostgresClient;
 
 /**
@@ -68,6 +70,20 @@ public final class PostgresTestSupport {
    */
   public static PostgresClient getClient(Vertx vertx, String tenantId) {
     return PostgresClient.getInstance(vertx, tenantId);
+  }
+
+  /**
+   * Deletes all rows from the given table in the named tenant's schema.
+   *
+   * @param tableName the unqualified table name
+   * @param vertx     the Vert.x instance
+   * @param tenantId  the tenant whose schema to clear
+   * @return a {@link Future} that completes when the delete finishes
+   */
+  public static Future<Void> clearTable(String tableName, Vertx vertx, String tenantId) {
+    return getClient(vertx, tenantId)
+      .delete(tableName, new Criterion())
+      .mapEmpty();
   }
 
   /**
