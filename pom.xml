@@ -39,6 +39,7 @@
     <testcontainers.version>2.0.5</testcontainers.version>
     <folio-kafka-wrapper.version>4.0.0</folio-kafka-wrapper.version>
     <kafka-clients.version>4.3.1</kafka-clients.version>
+    <folio-s3-client.version>3.1.0-SNAPSHOT</folio-s3-client.version>
 
     <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
     <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
@@ -103,6 +104,11 @@
         <groupId>org.apache.kafka</groupId>
         <artifactId>kafka-clients</artifactId>
         <version>${kafka-clients.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.folio</groupId>
+        <artifactId>folio-s3-client</artifactId>
+        <version>${folio-s3-client.version}</version>
       </dependency>
 
       <dependency>
