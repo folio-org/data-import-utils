@@ -10,6 +10,7 @@
 * Added S3 testing support using LocalStack [DIUTILS-2](https://issues.folio.org/browse/DIUTILS-2)
 * Added a shared WireMock server and RestAssured `spec`/`given()`/`postEntity()`/`putEntity()`/`getEntity()`/`deleteEntity()` helpers to `BaseRestTest` for stubbing calls to other modules and exercising the deployed module's API
 * Added `postRequest()`/`putRequest()`/`getRequest()`/`deleteRequest()` helpers (with query-parameter overloads) to `BaseRestTest` that return a RestAssured `ValidatableResponse` for custom status/body assertions
+* Added WireMock stub helpers for all HTTP methods (`stubGetJson()`, `stubPostJson()`, `stubPutJson()`, `stubPatchJson()`, `stubDelete()`, `stubDeleteJson()`), each with a default-status and a custom-status overload [DIUTILS-7](https://folio-org.atlassian.net/browse/DIUTILS-7)
 
 ### Bug fixes
 * Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
@@ -18,6 +19,7 @@
 * Restructured the repository into a multi-module Maven project: the root is now an aggregator/parent POM (`data-import-utils-parent`) and the production code moved to the new `data-import-support` module
 * Migrated tests from JUnit 4 to JUnit 5/6 (Jupiter)
 * Enforced Checkstyle rules (`folio-java-checkstyle`) across the codebase and fixed resulting violations
+* Split `BaseRestTest` into a layered test-support hierarchy (`BaseWireMockTest` → `BaseRestAssuredTest` → `BaseRestTest`) so WireMock stubbing and RestAssured helpers can be reused without the full Postgres/Kafka/Vertx stack; existing subclasses are unaffected [DIUTILS-7](https://folio-org.atlassian.net/browse/DIUTILS-7)
 * Added case-insensitive header handling test coverage for `RestUtil` and `ConnectionParams`
 
 ### Dependencies
