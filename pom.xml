@@ -51,6 +51,12 @@
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
     <folio-java-checkstyle.version>1.2.0</folio-java-checkstyle.version>
     <checkstyle.version>14.0.0</checkstyle.version>
+
+    <sonar.coverage.exclusions>
+      **/dataimport/testsupport/rest/BaseRestTest.java,
+      **/dataimport/testsupport/rest/BaseRestAssuredTest.java,
+      **/dataimport/testsupport/rest/BaseWireMockTest.java
+    </sonar.coverage.exclusions>
   </properties>
 
   <repositories>
