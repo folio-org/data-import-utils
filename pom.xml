@@ -40,6 +40,8 @@
     <folio-kafka-wrapper.version>4.0.0</folio-kafka-wrapper.version>
     <kafka-clients.version>4.3.1</kafka-clients.version>
     <folio-s3-client.version>3.1.0-SNAPSHOT</folio-s3-client.version>
+    <marc4j.version>2.9.6</marc4j.version>
+    <caffeine.version>3.2.4</caffeine.version>
 
     <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
     <maven-surefire-plugin.version>3.5.6</maven-surefire-plugin.version>
@@ -115,6 +117,16 @@
         <groupId>org.folio</groupId>
         <artifactId>folio-s3-client</artifactId>
         <version>${folio-s3-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.marc4j</groupId>
+        <artifactId>marc4j</artifactId>
+        <version>${marc4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.github.ben-manes.caffeine</groupId>
+        <artifactId>caffeine</artifactId>
+        <version>${caffeine.version}</version>
       </dependency>
 
       <dependency>
