@@ -83,6 +83,18 @@ public final class MarcContentCodec {
    * @return canonicalized content string
    */
   public static String canonicalize(Object content) {
-    return (content instanceof String contentStr ? new JsonObject(contentStr) : JsonObject.mapFrom(content)).encode();
+    return canonicalizeJson(content).encode();
+  }
+
+  /**
+   * Canonicalizes parsed record content (either a {@link String} or a structured type such as
+   * {@link JsonObject}/{@code Map}) into a single canonical JSON string, so that content differing only in
+   * whitespace or key order produces the same canonical form.
+   *
+   * @param content parsed record content
+   * @return canonicalized JsonObject
+   */
+  public static JsonObject canonicalizeJson(Object content) {
+    return (content instanceof String contentStr) ? new JsonObject(contentStr) : JsonObject.mapFrom(content);
   }
 }

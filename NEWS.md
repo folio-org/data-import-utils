@@ -11,6 +11,7 @@
 * Added a shared WireMock server and RestAssured `spec`/`given()`/`postEntity()`/`putEntity()`/`getEntity()`/`deleteEntity()` helpers to `BaseRestTest` for stubbing calls to other modules and exercising the deployed module's API
 * Added `postRequest()`/`putRequest()`/`getRequest()`/`deleteRequest()` helpers (with query-parameter overloads) to `BaseRestTest` that return a RestAssured `ValidatableResponse` for custom status/body assertions
 * Added WireMock stub helpers for all HTTP methods (`stubGetJson()`, `stubPostJson()`, `stubPutJson()`, `stubPatchJson()`, `stubDelete()`, `stubDeleteJson()`), each with a default-status and a custom-status overload [DIUTILS-7](https://folio-org.atlassian.net/browse/DIUTILS-7)
+* Implement common logic for marc record manipulation ([DIUTILS-8](https://folio-org.atlassian.net/browse/DIUTILS-8))
 
 ### Bug fixes
 * Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))

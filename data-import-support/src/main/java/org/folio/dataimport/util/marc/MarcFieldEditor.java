@@ -19,12 +19,6 @@ import org.marc4j.marc.VariableField;
  */
 public final class MarcFieldEditor {
 
-  /**
-   * Both indicators used to mark a data field as system-generated (e.g. tag 999), as opposed to fields that
-   * arrived on the incoming record.
-   */
-  private static final char INDICATOR_F = 'f';
-
   private MarcFieldEditor() {
   }
 
@@ -66,14 +60,14 @@ public final class MarcFieldEditor {
     VariableField variableField = getSingleFieldByIndicators(marcRecord.getVariableFields(field));
     DataField dataField;
     if (variableField != null
-        && ((DataField) variableField).getIndicator1() == INDICATOR_F
-        && ((DataField) variableField).getIndicator2() == INDICATOR_F
+        && ((DataField) variableField).getIndicator1() == MarcConstants.INDICATOR_F
+        && ((DataField) variableField).getIndicator2() == MarcConstants.INDICATOR_F
     ) {
       dataField = (DataField) variableField;
       marcRecord.removeVariableField(variableField);
       dataField.removeSubfield(dataField.getSubfield(subfield));
     } else {
-      dataField = factory.newDataField(field, INDICATOR_F, INDICATOR_F);
+      dataField = factory.newDataField(field, MarcConstants.INDICATOR_F, MarcConstants.INDICATOR_F);
     }
     dataField.addSubfield(factory.newSubfield(subfield, value));
     marcRecord.addVariableField(dataField);
@@ -278,7 +272,7 @@ public final class MarcFieldEditor {
     return list.stream()
       .filter(DataField.class::isInstance)
       .map(DataField.class::cast)
-      .filter(f -> f.getIndicator1() == INDICATOR_F && f.getIndicator2() == INDICATOR_F)
+      .filter(f -> f.getIndicator1() == MarcConstants.INDICATOR_F && f.getIndicator2() == MarcConstants.INDICATOR_F)
       .findFirst()
       .orElse(null);
   }
