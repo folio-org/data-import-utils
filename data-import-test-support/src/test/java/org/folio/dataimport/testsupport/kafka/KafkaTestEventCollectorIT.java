@@ -116,8 +116,10 @@ class KafkaTestEventCollectorIT {
       List.of("topic-timeout"))) {
 
       // act & assert
+      var timeout = Duration.ofMillis(300);
+      var predicate = keyEquals("missing-key");
       assertThatThrownBy(() ->
-        collector.awaitEvent("topic-timeout", keyEquals("missing-key"), Duration.ofMillis(300)))
+        collector.awaitEvent("topic-timeout", predicate, timeout))
         .isInstanceOf(AssertionError.class)
         .hasMessageContaining("topic-timeout");
     }
@@ -145,8 +147,10 @@ class KafkaTestEventCollectorIT {
       producer.send("topic-unexpected-event", "key", "value", null);
 
       // act & assert
+      var quietPeriod = Duration.ofSeconds(5);
+      var predicate = keyEquals("key");
       assertThatThrownBy(() ->
-        collector.assertNoEvent("topic-unexpected-event", keyEquals("key"), Duration.ofSeconds(5)))
+        collector.assertNoEvent("topic-unexpected-event", predicate, quietPeriod))
         .isInstanceOf(AssertionError.class)
         .hasMessageContaining("topic-unexpected-event");
     }

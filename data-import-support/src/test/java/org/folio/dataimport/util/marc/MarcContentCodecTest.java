@@ -20,14 +20,6 @@ class MarcContentCodecTest {
 
   private static final String PARSED_MARC_RECORD_PATH = "src/test/resources/marc/parsedMarcRecord.json";
 
-  private static String readFileFromPath(String path) {
-    try {
-      return Files.readString(Path.of(path));
-    } catch (IOException e) {
-      throw new UncheckedIOException(e);
-    }
-  }
-
   @DisplayName("should parse well-formed MARC-in-JSON content into a marc4j record")
   @Test
   void shouldParseValidContent_intoMarc4jRecord() {
@@ -90,7 +82,7 @@ class MarcContentCodecTest {
 
   @DisplayName("should propagate marc4j's oversized-record MarcException instead of swallowing it")
   @Test
-  void shouldPropagateOversizedRecordException_whenSerializedContentExceedsMarc21LengthLimit() throws Exception {
+  void shouldPropagateOversizedRecordException_whenSerializedContentExceedsMarc21LengthLimit() {
     // arrange: one field with a huge subfield value pushes the total ISO 2709 record length past marc4j's
     // MARC21 99999-byte ceiling. MarcStreamWriter throws MarcException past that limit; serializeWithRecalculatedLeader
     // must let it propagate unchanged so callers can keep distinguishing this specific failure from any other.
@@ -142,5 +134,13 @@ class MarcContentCodecTest {
 
     // assert
     assertThat(canonical).isEqualTo(JsonObject.mapFrom(content).encode());
+  }
+
+  private static String readFileFromPath(String path) {
+    try {
+      return Files.readString(Path.of(path));
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
   }
 }

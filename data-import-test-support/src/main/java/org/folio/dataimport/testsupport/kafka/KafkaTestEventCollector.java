@@ -135,9 +135,9 @@ public final class KafkaTestEventCollector implements AutoCloseable {
   }
 
   private ConsumerRecord<String, String> findFirst(String topic, Predicate<ConsumerRecord<String, String>> predicate) {
-    for (var record : recordsByTopic.getOrDefault(topic, List.of())) {
-      if (predicate.test(record)) {
-        return record;
+    for (var consumerRecord : recordsByTopic.getOrDefault(topic, List.of())) {
+      if (predicate.test(consumerRecord)) {
+        return consumerRecord;
       }
     }
     return null;

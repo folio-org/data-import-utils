@@ -1,5 +1,8 @@
 package org.folio.dataimport.util.marc;
 
+import static org.folio.dataimport.util.marc.MarcConstants.FIELD_001;
+import static org.folio.dataimport.util.marc.MarcConstants.FIELD_005;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -25,8 +28,6 @@ public final class MarcJsonFieldOrderer {
 
   private static final String TAG_00X_PREFIX = "00";
   private static final String FIELDS = "fields";
-  private static final String TAG_001 = "001";
-  private static final String TAG_005 = "005";
   private static final Logger LOGGER = LogManager.getLogger();
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -37,8 +38,8 @@ public final class MarcJsonFieldOrderer {
    * Take field values from system modified record content while preserving incoming record content`s field
    * order. Put system fields (001, 005) first, regardless of incoming record fields order.
    *
-   * @param sourceOrderContent  content with incoming record fields order
-   * @param systemOrderContent  system modified record content with reordered fields
+   * @param sourceOrderContent content with incoming record fields order
+   * @param systemOrderContent system modified record content with reordered fields
    * @return MARC record parsed content with desired fields order
    * @throws MarcContentException if reordering fails for any reason - the cause is attached
    */
@@ -48,7 +49,7 @@ public final class MarcJsonFieldOrderer {
       var fieldsArrayNode = (ArrayNode) parsedContent.path(FIELDS);
 
       var nodes = toNodeList(fieldsArrayNode);
-      var nodes00X = removeAndGetNodesByTagPrefix(nodes, TAG_00X_PREFIX);
+      var nodes00X = removeAndGetNodesByTagPrefix(nodes);
       var sourceOrderTags = getSourceFields(sourceOrderContent);
       var reorderedFields = OBJECT_MAPPER.createArrayNode();
 
@@ -65,19 +66,19 @@ public final class MarcJsonFieldOrderer {
   }
 
   private static void prependSystemFieldsFirst(List<JsonNode> nodes00X, ArrayNode reorderedFields) {
-    var node001 = removeAndGetNodeByTag(nodes00X, TAG_001);
+    var node001 = removeAndGetNodeByTag(nodes00X, FIELD_001);
     if (node001 != null && !node001.isEmpty()) {
       reorderedFields.add(node001);
     }
 
-    var node005 = removeAndGetNodeByTag(nodes00X, TAG_005);
+    var node005 = removeAndGetNodeByTag(nodes00X, FIELD_005);
     if (node005 != null && !node005.isEmpty()) {
       reorderedFields.add(node005);
     }
   }
 
   private static void appendFieldsInSourceOrder(List<JsonNode> nodes, List<JsonNode> nodes00X,
-                                                 List<String> sourceOrderTags, ArrayNode reorderedFields) {
+                                                List<String> sourceOrderTags, ArrayNode reorderedFields) {
     for (var tag : sourceOrderTags) {
       var nodeTag = tag;
       //loop will add system generated fields that are absent in initial record, preserving their order, f.e. 035
@@ -113,11 +114,11 @@ public final class MarcJsonFieldOrderer {
     return toRemove.orElse(null);
   }
 
-  private static List<JsonNode> removeAndGetNodesByTagPrefix(List<JsonNode> nodes, String prefix) {
+  private static List<JsonNode> removeAndGetNodesByTagPrefix(List<JsonNode> nodes) {
     var startsWithNodes = new LinkedList<JsonNode>();
     for (JsonNode node : nodes) {
       var nodeTag = getTagFromNode(node);
-      if (nodeTag.startsWith(prefix)) {
+      if (nodeTag.startsWith(TAG_00X_PREFIX)) {
         startsWithNodes.add(node);
       }
     }
@@ -151,10 +152,10 @@ public final class MarcJsonFieldOrderer {
     var has001 = false;
     for (JsonNode fieldNode : fieldsNode) {
       var tag = getTagFromNode(fieldNode);
-      if (tag.equals(TAG_001)) {
+      if (tag.equals(FIELD_001)) {
         sourceFields.addFirst(tag);
         has001 = true;
-      } else if (tag.equals(TAG_005)) {
+      } else if (tag.equals(FIELD_005)) {
         if (!has001) {
           sourceFields.addFirst(tag);
         } else {
