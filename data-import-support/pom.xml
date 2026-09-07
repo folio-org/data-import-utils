@@ -23,6 +23,14 @@
       <groupId>io.vertx</groupId>
       <artifactId>vertx-web-client</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.marc4j</groupId>
+      <artifactId>marc4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.github.ben-manes.caffeine</groupId>
+      <artifactId>caffeine</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>io.vertx</groupId>
@@ -37,6 +45,11 @@
     <dependency>
       <groupId>org.wiremock</groupId>
       <artifactId>wiremock</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

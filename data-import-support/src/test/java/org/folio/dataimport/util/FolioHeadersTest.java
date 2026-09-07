@@ -1,10 +1,9 @@
-package org.folio.dataimport.testsupport.tenant;
+package org.folio.dataimport.util;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
+import org.assertj.core.api.Assertions;
 import org.folio.okapi.common.XOkapiHeaders;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,12 +13,12 @@ class FolioHeadersTest {
   @Test
   void shouldBuildHeaderMapWithProvidedValues() {
     Map<String, String> headers = FolioHeaders.builder()
-      .url("http://localhost:9130")
+      .connectionUrl("http://localhost:9130")
       .tenant("diku")
       .token("test-token")
       .userId("00000000-0000-0000-0000-000000000001")
       .requestId("req-1")
-      .build();
+      .buildMap();
 
     assertEquals("http://localhost:9130", headers.get(XOkapiHeaders.URL));
     assertEquals("diku", headers.get(XOkapiHeaders.TENANT));
@@ -32,10 +31,10 @@ class FolioHeadersTest {
   @Test
   void shouldBuildEmptyHeaderMap_whenNoHeadersAreSet() {
     // act
-    Map<String, String> headers = FolioHeaders.builder().build();
+    Map<String, String> headers = FolioHeaders.builder().buildMap();
 
     // assert
-    assertThat(headers).isEmpty();
+    Assertions.assertThat(headers).isEmpty();
   }
 
   @DisplayName("should include only set headers when partial build is performed")
@@ -45,20 +44,20 @@ class FolioHeadersTest {
     Map<String, String> headers = FolioHeaders.builder()
       .tenant("test-tenant")
       .token("test-token")
-      .build();
+      .buildMap();
 
     // assert
-    assertThat(headers).containsOnlyKeys(XOkapiHeaders.TENANT, XOkapiHeaders.TOKEN);
+    Assertions.assertThat(headers).containsOnlyKeys(XOkapiHeaders.TENANT, XOkapiHeaders.TOKEN);
   }
 
   @DisplayName("should return immutable map when build is called")
   @Test
   void shouldReturnImmutableMap_whenBuildIsCalled() {
     // arrange
-    Map<String, String> headers = FolioHeaders.builder().tenant("test-tenant").build();
+    Map<String, String> headers = FolioHeaders.builder().tenant("test-tenant").buildMap();
 
     // assert
-    assertThatThrownBy(() -> headers.put("extra", "value"))
+    Assertions.assertThatThrownBy(() -> headers.put("extra", "value"))
       .isInstanceOf(UnsupportedOperationException.class);
   }
 }
