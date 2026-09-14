@@ -57,8 +57,29 @@ public final class TenantTestSupport {
    */
   public static Future<TenantJob> enableTenant(Vertx vertx, String okapiUrl, String tenantId,
                                                String token, TenantAttributes attributes) {
+    return enableTenant(WebClient.create(vertx), okapiUrl, tenantId, token, attributes);
+  }
+
+  /**
+   * Enables a tenant using fully specified attributes and waits for the job to complete, posting
+   * through the given {@code webClient} rather than a bare, freshly-created one.
+   *
+   * <p>Use this overload when the tenant-install request needs headers or other behavior a caller
+   * configures on its own {@link WebClient} (e.g. an interceptor adding {@code X-Okapi-Url}/
+   * {@code X-Okapi-Url-to} for a module that consults both) instead of duplicating this method's
+   * request/job-polling logic just to get such a client wired in.
+   *
+   * @param webClient  the (already configured) client to post the tenant request through
+   * @param okapiUrl   the Okapi/module base URL
+   * @param tenantId   the tenant identifier
+   * @param token      the Okapi token, may be {@code null}
+   * @param attributes the tenant attributes to post
+   * @return a future completed with the finished tenant job
+   */
+  public static Future<TenantJob> enableTenant(WebClient webClient, String okapiUrl, String tenantId,
+                                               String token, TenantAttributes attributes) {
     LOGGER.info("enableTenant:: Enabling tenant {} against {}", tenantId, okapiUrl);
-    var client = new TenantClient(okapiUrl, tenantId, token, WebClient.create(vertx));
+    var client = new TenantClient(okapiUrl, tenantId, token, webClient);
     return client.postTenant(attributes).compose(response -> awaitJob(client, response));
   }
 

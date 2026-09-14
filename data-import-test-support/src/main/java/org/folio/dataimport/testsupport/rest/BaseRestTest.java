@@ -1,34 +1,31 @@
 package org.folio.dataimport.testsupport.rest;
 
-import static org.folio.dataimport.testsupport.vertx.VertxTestUtil.await;
-
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
-import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonObject;
 import java.util.Map;
 import org.folio.dataimport.testsupport.kafka.KafkaExtension;
 import org.folio.dataimport.testsupport.postgres.PostgresExtension;
-import org.folio.dataimport.testsupport.tenant.TenantTestSupport;
+import org.folio.dataimport.testsupport.rest.SharedRestVerticleSupport.SharedRestVerticle;
 import org.folio.okapi.common.XOkapiHeaders;
 import org.folio.rest.RestVerticle;
 import org.folio.rest.jaxrs.model.TenantAttributes;
-import org.folio.rest.tools.utils.NetworkUtils;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Base class for raml-module-builder integration tests that need a running module.
  *
- * <p>Boots shared PostgreSQL and Kafka containers, deploys the standard raml-module-builder
- * {@link RestVerticle} on a random free port and runs the Tenant API so the module schema is
- * created before the first test. The deployment logic is identical for every raml-module-builder
- * module, so subclasses only provide the module id through {@link #getModuleName()}; the deployed
- * module is then reachable through {@link #connectionUrl} on {@link #port}.
+ * <p>Boots shared PostgreSQL and Kafka containers and deploys one shared raml-module-builder
+ * {@link RestVerticle} for the whole JVM, keyed by {@link #getModuleName()}. The first test class
+ * for a given module deploys it and enables its tenant; every later test class for the same module
+ * reuses the already-running verticle and, if it declares a tenant not yet enabled on it, enables
+ * just that tenant. This avoids paying the deploy-and-provision cost once per test class. Subclasses
+ * provide the module id through {@link #getModuleName()}; the deployed module is then reachable
+ * through {@link #connectionUrl} on {@link #port}.
  *
  * <p>WireMock support (stubbing other modules) and RestAssured HTTP helpers are inherited from
  * {@link BaseRestAssuredTest} and {@link BaseWireMockTest} respectively.
@@ -50,7 +47,8 @@ public abstract class BaseRestTest extends BaseRestAssuredTest {
 
   /**
    * Returns the module id used as the {@code moduleTo} value for the Tenant API,
-   * e.g. {@code mod-data-import-1.0.0}.
+   * e.g. {@code mod-data-import-1.0.0}. Also the key under which the shared verticle for this
+   * module is cached, so all test classes returning the same value share one deployment.
    *
    * @return the target module id
    */
@@ -114,21 +112,12 @@ public abstract class BaseRestTest extends BaseRestAssuredTest {
   }
 
   @BeforeAll
-  void deployRestVerticle() {
-    vertx = Vertx.vertx();
-    port = NetworkUtils.nextFreePort();
-    connectionUrl = "http://localhost:" + port;
-
-    var options = new DeploymentOptions().setConfig(new JsonObject().put("http.port", port));
-    await(vertx.deployVerticle(RestVerticle.class.getName(), options));
-    await(TenantTestSupport.enableTenant(vertx, connectionUrl, getTenantId(), getToken(), getTenantAttributes()));
+  void deployRestVerticle(ExtensionContext context) {
+    SharedRestVerticle shared = SharedRestVerticleSupport.getOrCreate(context, getModuleName());
+    vertx = shared.getVertx();
+    port = shared.getPort();
+    connectionUrl = shared.getConnectionUrl();
+    shared.enableTenantIfAbsent(getTenantId(), getToken(), getTenantAttributes());
     spec = buildSpec();
-  }
-
-  @AfterAll
-  void undeployRestVerticle() {
-    if (vertx != null) {
-      await(vertx.close());
-    }
   }
 }
