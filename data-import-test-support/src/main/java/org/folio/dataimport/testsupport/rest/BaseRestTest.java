@@ -13,6 +13,7 @@ import org.folio.rest.RestVerticle;
 import org.folio.rest.jaxrs.model.TenantAttributes;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
  * {@link BaseRestAssuredTest} and {@link BaseWireMockTest} respectively.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(ExtensionContextParameterResolver.class)
 public abstract class BaseRestTest extends BaseRestAssuredTest {
 
   @RegisterExtension
