@@ -35,7 +35,7 @@ public final class SharedRestVerticleSupport {
 
   /**
    * Returns the shared verticle deployment for {@code moduleId}, deploying it first if this is
-   * the first test class asking for it.
+   * the first test class asking for it. Equivalent to {@code getOrCreate(context, moduleId, true)}.
    *
    * @param context   the extension context of the calling test class (its root is used as the
    *                  JVM-wide store, so any test class's context works)
@@ -44,8 +44,30 @@ public final class SharedRestVerticleSupport {
    * @return the shared, already-deployed verticle
    */
   public static SharedRestVerticle getOrCreate(ExtensionContext context, String moduleId) {
-    var store = context.getRoot().getStore(NAMESPACE);
-    return store.getOrComputeIfAbsent(moduleId, key -> new SharedRestVerticle(), SharedRestVerticle.class);
+    return getOrCreate(context, moduleId, true);
+  }
+
+  /**
+   * Returns the verticle deployment for {@code moduleId}, deploying it first if none exists yet
+   * at the requested scope.
+   *
+   * @param context   the extension context of the calling test class
+   * @param moduleId  the target module id, e.g. {@code mod-inventory-storage-1.0.0}; also the
+   *                  cache key, so test classes passing the same value at the same scope share
+   *                  one deployment
+   * @param shared    when {@code true}, the deployment lives in {@code context}'s root store, so
+   *                  every test class in the JVM that asks for the same {@code moduleId} reuses
+   *                  it, and it is closed only when the whole run finishes. When {@code false},
+   *                  the deployment lives in {@code context}'s own store, so it is private to the
+   *                  calling test class and closed as soon as that class's tests finish - the same
+   *                  "one verticle per test class" behavior {@code BaseRestTest} had before shared
+   *                  deployments were introduced.
+   * @return the already-deployed verticle
+   */
+  public static SharedRestVerticle getOrCreate(ExtensionContext context, String moduleId, boolean shared) {
+    var storeContext = shared ? context.getRoot() : context;
+    var store = storeContext.getStore(NAMESPACE);
+    return store.computeIfAbsent(moduleId, key -> new SharedRestVerticle(), SharedRestVerticle.class);
   }
 
   /**
