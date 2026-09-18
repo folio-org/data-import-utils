@@ -13,6 +13,7 @@ import org.folio.rest.RestVerticle;
 import org.folio.rest.jaxrs.model.TenantAttributes;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
  * {@link BaseRestAssuredTest} and {@link BaseWireMockTest} respectively.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(ExtensionContextParameterResolver.class)
 public abstract class BaseRestTest extends BaseRestAssuredTest {
 
   @RegisterExtension
@@ -47,12 +49,30 @@ public abstract class BaseRestTest extends BaseRestAssuredTest {
 
   /**
    * Returns the module id used as the {@code moduleTo} value for the Tenant API,
-   * e.g. {@code mod-data-import-1.0.0}. Also the key under which the shared verticle for this
-   * module is cached, so all test classes returning the same value share one deployment.
+   * e.g. {@code mod-data-import-1.0.0}. Also the key under which the verticle for this module is
+   * cached when {@link #shareVerticle()} is {@code true}, so all test classes returning the same
+   * value then share one deployment.
    *
    * @return the target module id
    */
   protected abstract String getModuleName();
+
+  /**
+   * Whether the {@link RestVerticle} deployment for {@link #getModuleName()} is shared with every
+   * other test class for the lifetime of the JVM ({@code true}, the default), or deployed fresh
+   * for just this class and closed as soon as its tests finish ({@code false}).
+   *
+   * <p>Sharing is the faster default: for a repo with many reference-data-style test classes
+   * targeting the same module, it turns "deploy once per class" into "deploy once per run". Override
+   * to return {@code false} for a test class that mutates the deployment in a way other classes
+   * must not observe, e.g. one that installs a tenant with non-default parameters or replays a
+   * {@code moduleFrom}/{@code moduleTo} upgrade.
+   *
+   * @return whether to share the verticle deployment with other test classes
+   */
+  protected boolean shareVerticle() {
+    return true;
+  }
 
   /**
    * Returns the tenant enabled before the tests run. Defaults to {@code diku}.
@@ -113,7 +133,7 @@ public abstract class BaseRestTest extends BaseRestAssuredTest {
 
   @BeforeAll
   void deployRestVerticle(ExtensionContext context) {
-    SharedRestVerticle shared = SharedRestVerticleSupport.getOrCreate(context, getModuleName());
+    SharedRestVerticle shared = SharedRestVerticleSupport.getOrCreate(context, getModuleName(), shareVerticle());
     vertx = shared.getVertx();
     port = shared.getPort();
     connectionUrl = shared.getConnectionUrl();

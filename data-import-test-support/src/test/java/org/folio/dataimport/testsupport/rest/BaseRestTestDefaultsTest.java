@@ -37,4 +37,19 @@ class BaseRestTestDefaultsTest {
     // assert
     assertThat(base.getExtraSpecHeaders()).isEmpty();
   }
+
+  @DisplayName("should share the verticle across test classes by default")
+  @Test
+  void shouldShareVerticle_byDefault() {
+    // arrange
+    var base = new BaseRestTest() {
+      @Override
+      protected String getModuleName() {
+        return "mod-test-1.0.0";
+      }
+    };
+
+    // assert
+    assertThat(base.shareVerticle()).isTrue();
+  }
 }
