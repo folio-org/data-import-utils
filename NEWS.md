@@ -14,7 +14,7 @@
 * Implement common logic for marc record manipulation ([DIUTILS-8](https://folio-org.atlassian.net/browse/DIUTILS-8))
 
 ### Bug fixes
-* Description ([ISSUE](https://folio-org.atlassian.net/browse/ISSUE))
+* Fix IndexOutOfBoundsException on MARC 005 field replace in addOrReplaceControlField[DIUTILS-9](https://folio-org.atlassian.net/browse/DIUTILS-9)
 
 ### Tech Dept
 * Restructured the repository into a multi-module Maven project: the root is now an aggregator/parent POM (`data-import-utils-parent`) and the production code moved to the new `data-import-support` module
