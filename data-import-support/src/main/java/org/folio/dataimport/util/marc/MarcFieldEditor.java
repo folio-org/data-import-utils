@@ -31,17 +31,15 @@ public final class MarcFieldEditor {
    * @param replace    if true, replaces an existing field with the same tag; if false, appends a new field
    */
   public static void addOrReplaceControlField(Record marcRecord, String tag, String value, boolean replace) {
+    var newControlField = MarcFactory.newInstance().newControlField(tag, value);
     if (replace) {
-      var currentField = (ControlField) marcRecord.getVariableField(tag);
-      var newControlField = MarcFactory.newInstance().newControlField(tag, value);
-      if (currentField != null) {
-        marcRecord.getControlFields().set(marcRecord.getControlFields().indexOf(currentField), newControlField);
-      } else {
-        marcRecord.addVariableField(newControlField);
+      ControlField existing = (ControlField) marcRecord.getVariableField(tag);
+      if (existing != null) {
+        marcRecord.removeVariableField(existing);
       }
+      marcRecord.addVariableField(newControlField);
     } else {
-      ControlField controlField = MarcFactory.newInstance().newControlField(tag, value);
-      marcRecord.addVariableField(controlField);
+      marcRecord.addVariableField(newControlField);
     }
   }
 
