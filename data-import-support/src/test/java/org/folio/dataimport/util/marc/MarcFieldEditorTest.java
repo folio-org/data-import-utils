@@ -81,6 +81,27 @@ class MarcFieldEditorTest {
     assertThat(MarcFieldEditor.getControlFieldValue(marcRecord, "005")).isEqualTo("new-value");
   }
 
+  @DisplayName("should keep the replaced control field at its original position, not append it at the end — "
+    + "regression guard against removeVariableField+addVariableField which would move the field to the tail")
+  @Test
+  void shouldKeepReplacedControlFieldAtOriginalPosition_notAppendedAtEnd() {
+    // arrange: realistic fixture with 001 < 005 < 008 — same order as parsedMarcRecord.json used in
+    // AdditionalFieldsUtilTest; 005 sits between two other control fields
+    Record marcRecord = newRecord();
+    marcRecord.addVariableField(FACTORY.newControlField("001", "ybp7406411"));
+    marcRecord.addVariableField(FACTORY.newControlField("005", "20120404100627.6"));
+    marcRecord.addVariableField(FACTORY.newControlField("008", "120329s2011    sz a"));
+
+    // act
+    MarcFieldEditor.addOrReplaceControlField(marcRecord, "005", "20240909120000.0", true);
+
+    // assert: 005 is still at index 1 (between 001 and 008), not moved to the end
+    List<ControlField> controlFields = marcRecord.getControlFields();
+    assertThat(controlFields).hasSize(3);
+    assertThat(controlFields.stream().map(VariableField::getTag)).containsExactly("001", "005", "008");
+    assertThat(MarcFieldEditor.getControlFieldValue(marcRecord, "005")).isEqualTo("20240909120000.0");
+  }
+
   @DisplayName("should create a new ff-indicator data field and add the subfield when no matching field exists")
   @Test
   void shouldCreateNewDataField_whenNoExistingFieldMatchesIndicators() {
