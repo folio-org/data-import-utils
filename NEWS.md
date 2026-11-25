@@ -12,6 +12,7 @@
 * Added `postRequest()`/`putRequest()`/`getRequest()`/`deleteRequest()` helpers (with query-parameter overloads) to `BaseRestTest` that return a RestAssured `ValidatableResponse` for custom status/body assertions
 * Added WireMock stub helpers for all HTTP methods (`stubGetJson()`, `stubPostJson()`, `stubPutJson()`, `stubPatchJson()`, `stubDelete()`, `stubDeleteJson()`), each with a default-status and a custom-status overload [DIUTILS-7](https://folio-org.atlassian.net/browse/DIUTILS-7)
 * Implement common logic for marc record manipulation ([DIUTILS-8](https://folio-org.atlassian.net/browse/DIUTILS-8))
+* Added `DataImportContextKeys` with data import event payload context keys shared between modules (`JOB_PROFILE_SNAPSHOT_ID`, `INCOMING_RECORD_ID`, `CENTRAL_TENANT_ID`, `MAPPING_PARAMS`, `MAPPING_RULES`, `MULTI_MATCH_IDS`, `NOT_MATCHED_NUMBER`, `CURRENT_RETRY_NUMBER`)
 
 ### Bug fixes
 * Fix IndexOutOfBoundsException on MARC 005 field replace in addOrReplaceControlField[DIUTILS-9](https://folio-org.atlassian.net/browse/DIUTILS-9)
